@@ -1,17 +1,26 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { MapView } from "@/app/book/MapView";
 import { BookSearchProvider } from "@/app/book/BookSearchContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { PhotoGallery } from "@/app/book/PhotoGallery";
 import { ReservationDetails } from "@/app/book/ReservationDetails";
 import { PriceSummary } from "@/app/book/PriceSummary";
 import { ConfirmButton } from "@/app/book/ConfirmButton";
-import { MapPin, ArrowLeft, X } from "lucide-react";
+import { MapPin, ArrowLeft, X, FileText } from "lucide-react";
 
 export default function BookCarparkPage() {
+  const [detailsOpen, setDetailsOpen] = useState(true);
+
   return (
     <BookSearchProvider>
       <div className="relative h-dvh w-full overflow-hidden">
@@ -53,7 +62,14 @@ export default function BookCarparkPage() {
                 </div>
 
                 <div className="flex flex-col gap-6 p-5 md:p-8">
-                  <ReservationDetails />
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start gap-2"
+                    onClick={() => setDetailsOpen(true)}
+                  >
+                    <FileText className="h-4 w-4 shrink-0" />
+                    View reservation details
+                  </Button>
                   <PriceSummary />
 
                   <div className="rounded-xl bg-secondary px-4 py-3">
@@ -73,6 +89,22 @@ export default function BookCarparkPage() {
           </div>
         </div>
       </div>
+
+      <Sheet open={detailsOpen} onOpenChange={setDetailsOpen}>
+        <SheetContent
+          side="right"
+          className="flex w-full flex-col gap-0 sm:max-w-lg"
+        >
+          <SheetHeader className="shrink-0 border-b border-border pb-4">
+            <SheetTitle>Reservation details</SheetTitle>
+          </SheetHeader>
+          <div className="min-h-0 flex-1 overflow-auto p-4">
+            <TooltipProvider>
+              <ReservationDetails />
+            </TooltipProvider>
+          </div>
+        </SheetContent>
+      </Sheet>
     </BookSearchProvider>
   );
 }
