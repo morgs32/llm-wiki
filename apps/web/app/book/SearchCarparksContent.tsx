@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
-import { MapPin, PlusCircle, Wifi } from "lucide-react";
+import { MapPin, Wifi } from "lucide-react";
 
 import {
   SidebarContent,
@@ -12,7 +12,6 @@ import {
   SidebarGroup,
   SidebarGroupContent,
 } from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DateRangePicker } from "@/app/book/DateRangePicker";
 import {
@@ -63,21 +62,21 @@ export function SearchCarparksContent() {
   return (
     <>
       <SidebarHeader className="gap-3 p-3">
-        <div className="flex h-9 items-center gap-2 rounded-md border border-border bg-background px-2.5 text-sm text-muted-foreground shadow-xs">
-          <MapPin className="size-4 shrink-0" />
-          <span>Austin</span>
+        <div className="space-y-1">
+          <div className="flex h-9 items-center gap-2 rounded-md border border-border bg-background px-2.5 text-sm text-muted-foreground shadow-xs">
+            <MapPin className="size-4 shrink-0" />
+            <span>Austin</span>
+          </div>
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={() => setRequestCityOpen(true)}
+              className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2 transition-colors"
+            >
+              Request service in your city
+            </button>
+          </div>
         </div>
-
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="w-full justify-start gap-2 border-border bg-background shadow-xs"
-          onClick={() => setRequestCityOpen(true)}
-        >
-          <PlusCircle className="size-4 shrink-0" />
-          <span>Request service in your city</span>
-        </Button>
 
         <RequestCityModal open={requestCityOpen} onOpenChange={setRequestCityOpen} />
 

@@ -79,6 +79,7 @@ export function RequestCityModal({ open, onOpenChange }: RequestCityModalProps) 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <PlacesAutocomplete
             mode="cities"
+            size="sm"
             placeholder="City or municipality"
             fullWidth
             onPlaceSelect={handlePlaceSelect}
