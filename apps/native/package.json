@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@clerk/clerk-expo": "^2.19.6",
+    "convex": "^1.29.3",
     "@expo/vector-icons": "^15.0.3",
     "@packages/backend": "workspace:*",
     "@react-native/virtualized-lists": "^0.82.1",
