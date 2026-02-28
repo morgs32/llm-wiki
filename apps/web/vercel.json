@@ -1,0 +1,4 @@
+{
+  "installCommand": "cd ../.. && corepack enable && corepack prepare pnpm@9.15.9 --activate && corepack pnpm -v && corepack pnpm install --frozen-lockfile",
+  "buildCommand": "cd ../../packages/backend && npx convex deploy --cmd 'cd ../../apps/web && turbo run build' --cmd-url-env-var-name NEXT_PUBLIC_CONVEX_URL"
+}
