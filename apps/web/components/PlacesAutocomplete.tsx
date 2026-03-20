@@ -88,14 +88,12 @@ export function PlacesAutocomplete({
       }
 
       const autocompleteUrl =
-        mode === "cities"
-          ? "/api/places/autocomplete-cities"
-          : "/api/places/autocomplete";
+        mode === "cities" ? "/api/places/autocomplete-cities" : "/api/places/autocomplete";
 
       let url = `${autocompleteUrl}?query=${encodeURIComponent(input)}`;
       if (proximity && mode === "establishment") {
         url += `&locationLat=${encodeURIComponent(proximity.latitude)}&locationLng=${encodeURIComponent(
-          proximity.longitude
+          proximity.longitude,
         )}&radiusMeters=${encodeURIComponent(proximity.radiusMeters)}`;
       }
       setIsLoadingSuggestions(true);
@@ -234,11 +232,16 @@ export function PlacesAutocomplete({
     inputRef.current?.focus();
   }
 
-  const isOperational =
-    mode === "cities" || selectedPlace?.businessStatus === "OPERATIONAL";
+  const isOperational = mode === "cities" || selectedPlace?.businessStatus === "OPERATIONAL";
 
   return (
-    <div className={cn("relative w-full", !fullWidth && "mx-auto", !fullWidth && (sm ? "max-w-md" : "max-w-xl"))}>
+    <div
+      className={cn(
+        "relative w-full",
+        !fullWidth && "mx-auto",
+        !fullWidth && (sm ? "max-w-md" : "max-w-xl"),
+      )}
+    >
       {/* Search Input */}
       <div className="relative">
         <div
@@ -411,7 +414,12 @@ export function PlacesAutocomplete({
 
       {/* Selected Place Card */}
       {selectedPlace && isOperational && !isLoadingDetails && (
-        <div className={cn("mt-4 rounded-md border border-border bg-card overflow-hidden shadow-sm", sm && "text-sm")}>
+        <div
+          className={cn(
+            "mt-4 rounded-md border border-border bg-card overflow-hidden shadow-sm",
+            sm && "text-sm",
+          )}
+        >
           {/* Header */}
           <div className={cn(sm ? "px-3 pt-3 pb-2" : "px-5 pt-5 pb-4")}>
             <div className={cn("flex items-start justify-between", sm ? "gap-2" : "gap-3")}>
@@ -454,9 +462,7 @@ export function PlacesAutocomplete({
               {/* Rating */}
               {selectedPlace.rating !== null && (
                 <div className={cn("flex items-center", sm ? "gap-1" : "gap-1.5")}>
-                  <Star
-                    className={cn("text-amber-500 fill-amber-500", sm ? "size-3" : "size-4")}
-                  />
+                  <Star className={cn("text-amber-500 fill-amber-500", sm ? "size-3" : "size-4")} />
                   <span
                     className={cn("font-medium text-card-foreground", sm ? "text-xs" : "text-base")}
                   >
