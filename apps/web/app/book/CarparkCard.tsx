@@ -17,8 +17,18 @@ export interface CarparkData {
 /** Use when mapping a Convex carpark (with imageUrls) to CarparkData.image */
 export function getCarparkImageUrl(carpark: {
   imageUrls?: string[];
+  firstPlacePhotoName?: string | null;
 }): string {
-  return carpark.imageUrls?.[0] ?? "";
+  const manualFirst = carpark.imageUrls?.[0];
+  if (manualFirst) return manualFirst;
+
+  if (carpark.firstPlacePhotoName) {
+    return `/api/places/photo?name=${encodeURIComponent(
+      carpark.firstPlacePhotoName,
+    )}&maxHeightPx=200&maxWidthPx=200`;
+  }
+
+  return "";
 }
 
 interface CarparkCardProps {

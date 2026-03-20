@@ -105,6 +105,7 @@ export const listCarparks = query({
     const carparks = await ctx.db.query("carparks").collect();
     const destinations = await ctx.db.query("destinations").collect();
     const allSpaces = await ctx.db.query("parkingSpaces").collect();
+    const placePhotos = await ctx.db.query("selectedPlacePhoto").collect();
     const spaceCountByCarpark = new Map<
       (typeof allSpaces)[0]["carparkId"],
       number
@@ -116,10 +117,36 @@ export const listCarparks = query({
       );
     }
     const destMap = new Map(destinations.map((d) => [d._id, d]));
+
+    const placePhotoCountByCarpark = new Map<
+      (typeof placePhotos)[0]["carparkId"],
+      number
+    >();
+    const firstPlacePhotoNameByCarpark = new Map<
+      (typeof placePhotos)[0]["carparkId"],
+      { photoName: string; sortOrder: number }
+    >();
+    for (const photo of placePhotos) {
+      placePhotoCountByCarpark.set(
+        photo.carparkId,
+        (placePhotoCountByCarpark.get(photo.carparkId) ?? 0) + 1,
+      );
+
+      const existing = firstPlacePhotoNameByCarpark.get(photo.carparkId);
+      if (!existing || photo.sortOrder < existing.sortOrder) {
+        firstPlacePhotoNameByCarpark.set(photo.carparkId, {
+          photoName: photo.photoName,
+          sortOrder: photo.sortOrder,
+        });
+      }
+    }
+
     return carparks.map((c) => ({
       ...c,
       destinationName: destMap.get(c.destinationId)?.name ?? "",
       parkingSpaceCount: spaceCountByCarpark.get(c._id) ?? 0,
+      firstPlacePhotoName: firstPlacePhotoNameByCarpark.get(c._id)?.photoName ?? null,
+      placePhotoCount: placePhotoCountByCarpark.get(c._id) ?? 0,
     }));
   },
 });
@@ -232,6 +259,7 @@ export const removeCarpark = mutation({
     if (bookings.length > 0) {
       throw new Error("Cannot delete carpark with existing bookings");
     }
+
     const spaces = await ctx.db
       .query("parkingSpaces")
       .withIndex("by_carpark", (q) => q.eq("carparkId", args.carparkId))
@@ -239,6 +267,15 @@ export const removeCarpark = mutation({
     for (const space of spaces) {
       await ctx.db.delete(space._id);
     }
+
+    const selectedPhotos = await ctx.db
+      .query("selectedPlacePhoto")
+      .withIndex("by_carpark", (q) => q.eq("carparkId", args.carparkId))
+      .collect();
+    for (const photo of selectedPhotos) {
+      await ctx.db.delete(photo._id);
+    }
+
     await ctx.db.delete(args.carparkId);
   },
 });

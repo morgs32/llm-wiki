@@ -47,6 +47,11 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
+        <Button asChild variant="ghost" className="w-full justify-start">
+          <Link href="/">
+            <span className="font-semibold">Red Rope Parking</span>
+          </Link>
+        </Button>
         <NavUser user={data.user} />
       </SidebarFooter>
     </Sidebar>

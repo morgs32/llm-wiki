@@ -22,7 +22,9 @@ export interface PlaceDetails {
   types: string[];
   primaryType: string;
   primaryTypeDisplayName: string;
-  photoUrls: string[];
+  // Google Places "Place Photos (New)" resource names: places/PLACE_ID/photos/PHOTO_RESOURCE
+  // Actual image URLs are loaded on demand elsewhere in the app.
+  photoNames: string[];
   phone: string;
   website: string;
   rating: number | null;

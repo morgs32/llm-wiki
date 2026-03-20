@@ -28,6 +28,14 @@ export default defineSchema({
     destinationId: v.id("destinations"),
   }).index("by_destination", ["destinationId"]),
 
+  // Stores Google Places "photo.name" resources per carpark.
+  // Actual image URLs are loaded on demand via an API route.
+  selectedPlacePhoto: defineTable({
+    carparkId: v.id("carparks"),
+    photoName: v.string(),
+    sortOrder: v.number(),
+  }).index("by_carpark", ["carparkId", "sortOrder"]),
+
   parkingSpaces: defineTable({
     carparkId: v.id("carparks"),
   }).index("by_carpark", ["carparkId"]),

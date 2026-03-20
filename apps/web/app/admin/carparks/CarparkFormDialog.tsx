@@ -56,7 +56,10 @@ export function CarparkFormDialog({
   const [form, setForm] = React.useState(emptyForm);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [submitError, setSubmitError] = React.useState<string | null>(null);
-  const [placePhotoUrls, setPlacePhotoUrls] = React.useState<string[]>([]);
+  const [placePhotoNames, setPlacePhotoNames] = React.useState<string[]>([]);
+  const [selectedPlacePhotoNames, setSelectedPlacePhotoNames] = React.useState<
+    string[]
+  >([]);
 
   const carpark = useQuery(
     api.carparks.getCarpark,
@@ -65,6 +68,13 @@ export function CarparkFormDialog({
   const destinations = useQuery(api.destinations.listDestinations);
   const createCarpark = useMutation(api.carparks.createCarpark);
   const updateCarpark = useMutation(api.carparks.updateCarpark);
+  const selectedPlacePhotos = useQuery(
+    api.selectedPlacePhotos.listSelectedPlacePhotos,
+    carparkId ? { carparkId } : "skip"
+  );
+  const setSelectedPlacePhotos = useMutation(
+    api.selectedPlacePhotos.setSelectedPlacePhotos
+  );
 
   const isEdit = !!carparkId;
 
@@ -96,10 +106,15 @@ export function CarparkFormDialog({
         amenities: carpark.amenities.join(", "),
         imageUrls: carpark.imageUrls?.length ? [...carpark.imageUrls] : [],
       });
+
+      setSelectedPlacePhotoNames(
+        (selectedPlacePhotos ?? []).map((p) => p.photoName),
+      );
     } else if (!isEdit) {
       setForm(emptyForm);
+      setSelectedPlacePhotoNames([]);
     }
-  }, [open, isEdit, carpark]);
+  }, [open, isEdit, carpark, selectedPlacePhotos]);
 
   const update = (updates: Partial<typeof form>) =>
     setForm((prev) => ({ ...prev, ...updates }));
@@ -118,7 +133,8 @@ export function CarparkFormDialog({
   const handlePlaceSelect = React.useCallback(
     (place: PlaceDetails | null) => {
       if (!place) {
-        setPlacePhotoUrls([]);
+        setPlacePhotoNames([]);
+        setSelectedPlacePhotoNames([]);
         update({
           name: "",
           description: "",
@@ -145,23 +161,21 @@ export function CarparkFormDialog({
         latitude: place.location ? String(place.location.latitude) : "",
         longitude: place.location ? String(place.location.longitude) : "",
       });
-      setPlacePhotoUrls(place.photoUrls ?? []);
+      setPlacePhotoNames(place.photoNames ?? []);
+      // Selection should be tied to the currently selected place.
+      setSelectedPlacePhotoNames([]);
     },
     [update]
   );
 
-  const appendPlacePhotoToImages = React.useCallback(
-    (url: string) => {
-      const cleaned = url.trim();
-      if (!cleaned) return;
+  const toggleSelectedPlacePhotoName = React.useCallback((photoName: string) => {
+    const cleaned = photoName.trim();
+    if (!cleaned) return;
 
-      setForm((prev) => {
-        if (prev.imageUrls.includes(cleaned)) return prev;
-        return { ...prev, imageUrls: [...prev.imageUrls, cleaned] };
-      });
-    },
-    []
-  );
+    setSelectedPlacePhotoNames((prev) =>
+      prev.includes(cleaned) ? prev.filter((n) => n !== cleaned) : [...prev, cleaned],
+    );
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -202,8 +216,13 @@ export function CarparkFormDialog({
           amenities,
           imageUrls,
         });
+
+        await setSelectedPlacePhotos({
+          carparkId,
+          photoNames: selectedPlacePhotoNames,
+        });
       } else {
-        await createCarpark({
+        const createdCarparkId = await createCarpark({
           name: form.name.trim(),
           description: form.description.trim(),
           address: form.address.trim(),
@@ -214,6 +233,11 @@ export function CarparkFormDialog({
           destinationId,
           amenities,
           imageUrls,
+        });
+
+        await setSelectedPlacePhotos({
+          carparkId: createdCarparkId,
+          photoNames: selectedPlacePhotoNames,
         });
       }
       onSuccess();
@@ -244,7 +268,8 @@ export function CarparkFormDialog({
               // An empty string represents "no destination selected".
               value={form.destinationId ? String(form.destinationId) : ""}
               onValueChange={(value) => {
-                setPlacePhotoUrls([]);
+                setPlacePhotoNames([]);
+                setSelectedPlacePhotoNames([]);
                 update({
                   destinationId: (value ?? "") as Id<"destinations"> | "",
                   // Ensure the place search + selected place details match the selected destination.
@@ -365,40 +390,46 @@ export function CarparkFormDialog({
             />
           </div>
           <div className="grid gap-2">
-            <Label>Place thumbnails</Label>
-            {placePhotoUrls.length > 0 ? (
+            <Label>Place photos</Label>
+            {placePhotoNames.length > 0 || selectedPlacePhotoNames.length > 0 ? (
               <div className="grid grid-cols-3 gap-2">
-                {placePhotoUrls.slice(0, 9).map((url) => {
-                  const alreadyAdded = form.imageUrls.includes(url);
-                  return (
-                    <button
-                      key={url}
-                      type="button"
-                      aria-label="Add place thumbnail"
-                      onClick={() => appendPlacePhotoToImages(url)}
-                      className="relative rounded border bg-muted p-0.5 overflow-hidden hover:opacity-90 disabled:opacity-50"
-                      disabled={alreadyAdded}
-                    >
-                      <img
-                        src={url}
-                        alt=""
-                        className="h-20 w-full object-cover rounded"
-                        onError={(e) => {
-                          e.currentTarget.style.display = "none";
-                        }}
-                      />
-                      {alreadyAdded && (
-                        <span className="absolute right-1 top-1 rounded bg-background/80 px-1 text-[10px]">
-                          Added
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
+                {(placePhotoNames.length > 0 ? placePhotoNames : selectedPlacePhotoNames)
+                  .slice(0, 9)
+                  .map((photoName) => {
+                    const isSelected = selectedPlacePhotoNames.includes(photoName);
+                    const src = `/api/places/photo?name=${encodeURIComponent(
+                      photoName,
+                    )}&maxHeightPx=200&maxWidthPx=200`;
+
+                    return (
+                      <button
+                        key={photoName}
+                        type="button"
+                        aria-label="Toggle place photo"
+                        aria-pressed={isSelected}
+                        onClick={() => toggleSelectedPlacePhotoName(photoName)}
+                        className="relative rounded border bg-muted p-0.5 overflow-hidden hover:opacity-90"
+                      >
+                        <img
+                          src={src}
+                          alt=""
+                          className="h-20 w-full object-cover rounded"
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                          }}
+                        />
+                        {isSelected && (
+                          <span className="absolute right-1 top-1 rounded bg-background/80 px-1 text-[10px]">
+                            Selected
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
               </div>
             ) : (
               <p className="text-muted-foreground text-sm">
-                Select a place to see thumbnails.
+                Select a place to see photos.
               </p>
             )}
           </div>

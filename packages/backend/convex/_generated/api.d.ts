@@ -14,6 +14,7 @@ import type * as destinationRequests from "../destinationRequests.js";
 import type * as destinations from "../destinations.js";
 import type * as notes from "../notes.js";
 import type * as openai from "../openai.js";
+import type * as selectedPlacePhotos from "../selectedPlacePhotos.js";
 import type * as utils from "../utils.js";
 
 import type {
@@ -29,6 +30,7 @@ declare const fullApi: ApiFromModules<{
   destinations: typeof destinations;
   notes: typeof notes;
   openai: typeof openai;
+  selectedPlacePhotos: typeof selectedPlacePhotos;
   utils: typeof utils;
 }>;
 

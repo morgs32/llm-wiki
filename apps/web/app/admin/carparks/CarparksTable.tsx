@@ -19,6 +19,8 @@ import {
 export type CarparkWithDestination = Doc<"carparks"> & {
   destinationName: string;
   parkingSpaceCount: number;
+  firstPlacePhotoName?: string | null;
+  placePhotoCount?: number;
 };
 
 const columns = (
@@ -71,9 +73,17 @@ const columns = (
     id: "images",
     header: "Images",
     cell: ({ row }) => {
-      const urls = row.original.imageUrls ?? [];
-      const first = urls[0];
-      const rest = urls.length - 1;
+      const manualUrls = row.original.imageUrls ?? [];
+      const manualFirst = manualUrls[0];
+      let first: string | undefined = manualFirst;
+      let rest = manualUrls.length - 1;
+
+      if (!first && row.original.firstPlacePhotoName) {
+        first = `/api/places/photo?name=${encodeURIComponent(
+          row.original.firstPlacePhotoName,
+        )}&maxHeightPx=200&maxWidthPx=200`;
+        rest = Math.max(0, (row.original.placePhotoCount ?? 1) - 1);
+      }
       return (
         <div className="flex items-center gap-1">
           {first ? (

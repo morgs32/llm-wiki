@@ -6,8 +6,10 @@ import { useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import { MapPin, Wifi } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import {
   SidebarContent,
+  SidebarFooter,
   SidebarHeader,
   SidebarGroup,
   SidebarGroupContent,
@@ -109,6 +111,14 @@ export function SearchCarparksContent() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
+      <SidebarFooter>
+        <Button asChild variant="ghost" className="w-full justify-start">
+          <Link href="/">
+            <span className="font-semibold">Red Rope Parking</span>
+          </Link>
+        </Button>
+      </SidebarFooter>
     </>
   );
 }
