@@ -24,17 +24,23 @@ export async function GET(request: NextRequest) {
     const locationLng = locationLngRaw ? Number.parseFloat(locationLngRaw) : NaN;
     const radiusMeters = radiusMetersRaw ? Number.parseFloat(radiusMetersRaw) : NaN;
 
+      // Google Places API validates the locationBias circle radius:
+      // it must be between 0 and 50,000 meters.
+      const radiusMetersClamped = Number.isFinite(radiusMeters)
+        ? Math.max(0, Math.min(radiusMeters, 50_000))
+        : NaN;
+
     const shouldApplyLocationBias =
       Number.isFinite(locationLat) &&
       Number.isFinite(locationLng) &&
-      Number.isFinite(radiusMeters) &&
-      radiusMeters > 0;
+        Number.isFinite(radiusMetersClamped) &&
+        radiusMetersClamped > 0;
 
     const locationBias = shouldApplyLocationBias
       ? {
           circle: {
             center: { latitude: locationLat, longitude: locationLng },
-            radius: radiusMeters,
+              radius: radiusMetersClamped,
           },
         }
       : undefined;

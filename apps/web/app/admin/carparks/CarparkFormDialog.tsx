@@ -74,7 +74,8 @@ export function CarparkFormDialog({
     ? {
         latitude: selectedDestination.latitude,
         longitude: selectedDestination.longitude,
-        radiusMeters: 100_000, // 100km
+        // Google Places API only allows locationBias radius up to 50,000m.
+        radiusMeters: 50_000,
       }
     : undefined;
 
@@ -255,6 +256,17 @@ export function CarparkFormDialog({
             </Select>
           </div>
           <div className="grid gap-2">
+            <Label>Search for a place</Label>
+            <PlacesAutocomplete
+              key={form.destinationId || "no-destination"}
+              size="sm"
+              fullWidth
+              placeholder="Search address or place..."
+              onPlaceSelect={handlePlaceSelect}
+              proximity={placeProximity}
+            />
+          </div>
+          <div className="grid gap-2">
             <Label htmlFor="name">Name</Label>
             <Input
               id="name"
@@ -324,17 +336,6 @@ export function CarparkFormDialog({
             </div>
           </div>
 
-          <div className="grid gap-2">
-            <Label>Search for a place</Label>
-            <PlacesAutocomplete
-              key={form.destinationId || "no-destination"}
-              size="sm"
-              fullWidth
-              placeholder="Search address or place..."
-              onPlaceSelect={handlePlaceSelect}
-              proximity={placeProximity}
-            />
-          </div>
           <div className="grid gap-2">
             <Label htmlFor="amenities">Amenities (comma-separated)</Label>
             <Input
