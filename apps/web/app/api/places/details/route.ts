@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
         "Content-Type": "application/json",
         "X-Goog-Api-Key": apiKey,
         "X-Goog-FieldMask":
-          "id,displayName,formattedAddress,businessStatus,types,primaryType,primaryTypeDisplayName,nationalPhoneNumber,websiteUri,rating,userRatingCount,currentOpeningHours,location",
+          "id,displayName,formattedAddress,businessStatus,types,primaryType,primaryTypeDisplayName,nationalPhoneNumber,websiteUri,rating,userRatingCount,currentOpeningHours,location,photos",
       },
     });
 
@@ -36,6 +36,33 @@ export async function GET(request: NextRequest) {
     }
 
     const data = await response.json();
+
+    const photoNames: string[] = Array.isArray(data.photos)
+      ? data.photos
+          .map((p: { name?: string | null }) => p.name)
+          .filter((n: string | null | undefined): n is string => Boolean(n))
+      : [];
+
+    // Convert photo resource names into short-lived thumbnail URIs.
+    // Google requires a separate call per photo, and the `photoUri` is returned only
+    // by the Place Photos endpoint.
+    const photoUris = await Promise.all(
+      photoNames.slice(0, 9).map(async (photoName) => {
+        try {
+          const photoResp = await fetch(
+            `https://places.googleapis.com/v1/${photoName}/media?key=${encodeURIComponent(
+              apiKey,
+            )}&maxHeightPx=200&maxWidthPx=200&skipHttpRedirect=true`,
+          );
+
+          if (!photoResp.ok) return null;
+          const photoData = await photoResp.json();
+          return typeof photoData?.photoUri === "string" ? photoData.photoUri : null;
+        } catch {
+          return null;
+        }
+      }),
+    );
 
     return NextResponse.json({
       place: {
@@ -52,6 +79,7 @@ export async function GET(request: NextRequest) {
         ratingCount: data.userRatingCount || 0,
         location: data.location || null,
         isOpen: data.currentOpeningHours?.openNow ?? null,
+        photoUrls: photoUris.filter((u): u is string => typeof u === "string" && u.length > 0),
       },
     });
   } catch (error) {

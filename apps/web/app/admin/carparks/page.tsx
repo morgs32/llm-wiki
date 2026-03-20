@@ -9,9 +9,7 @@ import type { CarparkWithDestination } from "./CarparksTable";
 
 export default function CarparksPage() {
   const [formOpen, setFormOpen] = useState(false);
-  const [editingCarparkId, setEditingCarparkId] = useState<Id<"carparks"> | null>(
-    null
-  );
+  const [editingCarparkId, setEditingCarparkId] = useState<Id<"carparks"> | null>(null);
 
   const openCreate = () => {
     setEditingCarparkId(null);

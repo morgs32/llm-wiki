@@ -22,6 +22,7 @@ export interface PlaceDetails {
   types: string[];
   primaryType: string;
   primaryTypeDisplayName: string;
+  photoUrls: string[];
   phone: string;
   website: string;
   rating: number | null;

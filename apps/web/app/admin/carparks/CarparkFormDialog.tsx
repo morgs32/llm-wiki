@@ -56,6 +56,7 @@ export function CarparkFormDialog({
   const [form, setForm] = React.useState(emptyForm);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [submitError, setSubmitError] = React.useState<string | null>(null);
+  const [placePhotoUrls, setPlacePhotoUrls] = React.useState<string[]>([]);
 
   const carpark = useQuery(
     api.carparks.getCarpark,
@@ -117,6 +118,7 @@ export function CarparkFormDialog({
   const handlePlaceSelect = React.useCallback(
     (place: PlaceDetails | null) => {
       if (!place) {
+        setPlacePhotoUrls([]);
         update({
           name: "",
           description: "",
@@ -143,8 +145,22 @@ export function CarparkFormDialog({
         latitude: place.location ? String(place.location.latitude) : "",
         longitude: place.location ? String(place.location.longitude) : "",
       });
+      setPlacePhotoUrls(place.photoUrls ?? []);
     },
     [update]
+  );
+
+  const appendPlacePhotoToImages = React.useCallback(
+    (url: string) => {
+      const cleaned = url.trim();
+      if (!cleaned) return;
+
+      setForm((prev) => {
+        if (prev.imageUrls.includes(cleaned)) return prev;
+        return { ...prev, imageUrls: [...prev.imageUrls, cleaned] };
+      });
+    },
+    []
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -224,8 +240,11 @@ export function CarparkFormDialog({
           <div className="grid gap-2">
             <Label>Destination</Label>
             <Select
-              value={form.destinationId || undefined}
-              onValueChange={(value) =>
+              // Keep the Select controlled for the lifetime of the component.
+              // An empty string represents "no destination selected".
+              value={form.destinationId ? String(form.destinationId) : ""}
+              onValueChange={(value) => {
+                setPlacePhotoUrls([]);
                 update({
                   destinationId: (value ?? "") as Id<"destinations"> | "",
                   // Ensure the place search + selected place details match the selected destination.
@@ -234,8 +253,8 @@ export function CarparkFormDialog({
                   address: "",
                   latitude: "",
                   longitude: "",
-                })
-              }
+                });
+              }}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select destination">
@@ -344,6 +363,44 @@ export function CarparkFormDialog({
               onChange={(e) => update({ amenities: e.target.value })}
               placeholder="e.g. WiFi, Pool, Gym"
             />
+          </div>
+          <div className="grid gap-2">
+            <Label>Place thumbnails</Label>
+            {placePhotoUrls.length > 0 ? (
+              <div className="grid grid-cols-3 gap-2">
+                {placePhotoUrls.slice(0, 9).map((url) => {
+                  const alreadyAdded = form.imageUrls.includes(url);
+                  return (
+                    <button
+                      key={url}
+                      type="button"
+                      aria-label="Add place thumbnail"
+                      onClick={() => appendPlacePhotoToImages(url)}
+                      className="relative rounded border bg-muted p-0.5 overflow-hidden hover:opacity-90 disabled:opacity-50"
+                      disabled={alreadyAdded}
+                    >
+                      <img
+                        src={url}
+                        alt=""
+                        className="h-20 w-full object-cover rounded"
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                        }}
+                      />
+                      {alreadyAdded && (
+                        <span className="absolute right-1 top-1 rounded bg-background/80 px-1 text-[10px]">
+                          Added
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-muted-foreground text-sm">
+                Select a place to see thumbnails.
+              </p>
+            )}
           </div>
           <div className="grid gap-2">
             <div className="flex items-center justify-between">
