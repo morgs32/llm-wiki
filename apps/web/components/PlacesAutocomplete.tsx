@@ -37,6 +37,15 @@ interface PlacesAutocompleteProps {
   placeholder?: string;
   /** "establishment" = businesses (default); "cities" = cities/municipalities only. */
   mode?: "establishment" | "cities";
+  /**
+   * Optional proximity bias for results (Google Places locationBias circle).
+   * Only applied for `mode="establishment"`.
+   */
+  proximity?: {
+    latitude: number;
+    longitude: number;
+    radiusMeters: number;
+  };
   /** Called when the user selects a place (after details load) or clears selection. */
   onPlaceSelect?: (place: PlaceDetails | null) => void;
 }
@@ -50,6 +59,7 @@ export function PlacesAutocomplete({
   fullWidth = false,
   placeholder = "Search for a business...",
   mode = "establishment",
+  proximity,
   onPlaceSelect,
 }: PlacesAutocompleteProps) {
   const sm = size === "sm";
@@ -80,11 +90,16 @@ export function PlacesAutocomplete({
         mode === "cities"
           ? "/api/places/autocomplete-cities"
           : "/api/places/autocomplete";
+
+      let url = `${autocompleteUrl}?query=${encodeURIComponent(input)}`;
+      if (proximity && mode === "establishment") {
+        url += `&locationLat=${encodeURIComponent(proximity.latitude)}&locationLng=${encodeURIComponent(
+          proximity.longitude
+        )}&radiusMeters=${encodeURIComponent(proximity.radiusMeters)}`;
+      }
       setIsLoadingSuggestions(true);
       try {
-        const res = await fetch(
-          `${autocompleteUrl}?query=${encodeURIComponent(input)}`,
-        );
+        const res = await fetch(url);
         const data = await res.json();
 
         if (data.suggestions && data.suggestions.length > 0) {
@@ -109,7 +124,7 @@ export function PlacesAutocomplete({
         setIsLoadingSuggestions(false);
       }
     },
-    [mode],
+    [mode, proximity],
   );
 
   // Debounced search

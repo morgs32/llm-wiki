@@ -23,15 +23,14 @@ export type CarparkWithDestination = Doc<"carparks"> & {
 
 const columns = (
   onEdit: (carpark: CarparkWithDestination) => void,
-  onDelete: (carpark: CarparkWithDestination) => void
+  onDelete: (carpark: CarparkWithDestination) => void,
 ): ColumnDef<CarparkWithDestination>[] => [
   {
     id: "select",
     header: ({ table }) => (
       <Checkbox
         checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() ? true : false)
+          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() ? true : false)
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
@@ -50,9 +49,7 @@ const columns = (
   {
     accessorKey: "name",
     header: "Name",
-    cell: ({ row }) => (
-      <span className="font-medium">{row.original.name}</span>
-    ),
+    cell: ({ row }) => <span className="font-medium">{row.original.name}</span>,
   },
   {
     accessorKey: "description",
@@ -67,9 +64,7 @@ const columns = (
     accessorKey: "destinationName",
     header: "Destination",
     cell: ({ row }) => (
-      <span className="text-muted-foreground text-sm">
-        {row.original.destinationName || "—"}
-      </span>
+      <span className="text-muted-foreground text-sm">{row.original.destinationName || "—"}</span>
     ),
   },
   {
@@ -83,18 +78,12 @@ const columns = (
         <div className="flex items-center gap-1">
           {first ? (
             <div className="relative h-8 w-12 shrink-0 overflow-hidden rounded border bg-muted">
-              <img
-                src={first}
-                alt=""
-                className="h-full w-full object-cover"
-              />
+              <img src={first} alt="" className="h-full w-full object-cover" />
             </div>
           ) : (
             <span className="text-muted-foreground text-xs">—</span>
           )}
-          {rest > 0 && (
-            <span className="text-muted-foreground text-xs">+{rest}</span>
-          )}
+          {rest > 0 && <span className="text-muted-foreground text-xs">+{rest}</span>}
         </div>
       );
     },
@@ -102,19 +91,13 @@ const columns = (
   {
     accessorKey: "pricePerNight",
     header: () => <div className="text-right">Price/night</div>,
-    cell: ({ row }) => (
-      <div className="text-right tabular-nums">
-        ${row.original.pricePerNight}
-      </div>
-    ),
+    cell: ({ row }) => <div className="text-right tabular-nums">${row.original.pricePerNight}</div>,
   },
   {
     accessorKey: "parkingSpaceCount",
     header: () => <div className="text-right">Spaces</div>,
     cell: ({ row }) => (
-      <div className="text-right tabular-nums">
-        {row.original.parkingSpaceCount}
-      </div>
+      <div className="text-right tabular-nums">{row.original.parkingSpaceCount}</div>
     ),
   },
   {
@@ -124,7 +107,7 @@ const columns = (
       const carpark = row.original;
       return (
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger asChild nativeButton>
             <Button variant="ghost" className="size-8 p-0">
               <span className="sr-only">Open menu</span>
               <IconDotsVertical className="size-4" />
@@ -135,10 +118,7 @@ const columns = (
               <IconPencil className="mr-2 size-4" />
               Edit
             </DropdownMenuItem>
-            <DropdownMenuItem
-              variant="destructive"
-              onClick={() => onDelete(carpark)}
-            >
+            <DropdownMenuItem variant="destructive" onClick={() => onDelete(carpark)}>
               <IconTrash className="mr-2 size-4" />
               Delete
             </DropdownMenuItem>
@@ -155,11 +135,7 @@ interface CarparksTableProps {
   onDelete?: (carpark: CarparkWithDestination) => void;
 }
 
-export function CarparksTable({
-  onAddClick,
-  onEdit = () => {},
-  onDelete,
-}: CarparksTableProps) {
+export function CarparksTable({ onAddClick, onEdit = () => {}, onDelete }: CarparksTableProps) {
   const list = useQuery(api.carparks.listCarparks);
   const removeCarpark = useMutation(api.carparks.removeCarpark);
   const isLoading = list === undefined;

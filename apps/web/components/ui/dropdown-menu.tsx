@@ -13,18 +13,31 @@ function DropdownMenuPortal({ ...props }: MenuPrimitive.Portal.Props) {
   return <MenuPrimitive.Portal data-slot="dropdown-menu-portal" {...props} />;
 }
 
+type DropdownMenuTriggerProps = MenuPrimitive.Trigger.Props & {
+  asChild?: boolean;
+  nativeButton?: boolean;
+};
+
 function DropdownMenuTrigger({
   asChild = false,
   children,
+  nativeButton = false,
   ...props
-}: MenuPrimitive.Trigger.Props & { asChild?: boolean }) {
+}: DropdownMenuTriggerProps) {
+  // Base UI generates an `id` internally for the trigger. In dev/SSR this can become non-deterministic
+  // and cause hydration mismatches, so we provide a stable one.
+  const reactId = React.useId();
+  const { id: idProp, ...restProps } = props;
+  const triggerId = idProp ?? reactId;
+
   if (asChild && React.isValidElement(children)) {
     const child = children as React.ReactElement<Record<string, unknown>>;
     return (
       <MenuPrimitive.Trigger
         data-slot="dropdown-menu-trigger"
-        nativeButton={false}
-        {...props}
+        nativeButton={nativeButton}
+        {...restProps}
+        id={triggerId}
         render={(triggerProps) =>
           React.cloneElement(child, {
             ...(typeof child.props === "object" && child.props !== null ? child.props : {}),
@@ -35,7 +48,11 @@ function DropdownMenuTrigger({
     );
   }
   return (
-    <MenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props}>
+    <MenuPrimitive.Trigger
+      data-slot="dropdown-menu-trigger"
+      {...restProps}
+      id={triggerId}
+    >
       {children}
     </MenuPrimitive.Trigger>
   );

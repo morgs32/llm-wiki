@@ -71,7 +71,7 @@ const columns: ColumnDef<Destination>[] = [
     enableHiding: false,
     cell: () => (
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
+        <DropdownMenuTrigger asChild nativeButton>
           <Button variant="ghost" className="size-8 p-0">
             <span className="sr-only">Open menu</span>
             <IconDotsVertical className="size-4" />

@@ -10,12 +10,35 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ suggestions: [] });
   }
 
+  const locationLatRaw = request.nextUrl.searchParams.get("locationLat");
+  const locationLngRaw = request.nextUrl.searchParams.get("locationLng");
+  const radiusMetersRaw = request.nextUrl.searchParams.get("radiusMeters");
+
   const apiKey = getApiKey();
   if (!apiKey) {
     return NextResponse.json({ error: "Missing Google Places API key" }, { status: 500 });
   }
 
   try {
+    const locationLat = locationLatRaw ? Number.parseFloat(locationLatRaw) : NaN;
+    const locationLng = locationLngRaw ? Number.parseFloat(locationLngRaw) : NaN;
+    const radiusMeters = radiusMetersRaw ? Number.parseFloat(radiusMetersRaw) : NaN;
+
+    const shouldApplyLocationBias =
+      Number.isFinite(locationLat) &&
+      Number.isFinite(locationLng) &&
+      Number.isFinite(radiusMeters) &&
+      radiusMeters > 0;
+
+    const locationBias = shouldApplyLocationBias
+      ? {
+          circle: {
+            center: { latitude: locationLat, longitude: locationLng },
+            radius: radiusMeters,
+          },
+        }
+      : undefined;
+
     const response = await fetch("https://places.googleapis.com/v1/places:autocomplete", {
       method: "POST",
       headers: {
@@ -25,6 +48,7 @@ export async function GET(request: NextRequest) {
       body: JSON.stringify({
         input: query,
         includedPrimaryTypes: ["establishment"],
+        ...(locationBias ? { locationBias } : {}),
       }),
     });
 

@@ -67,6 +67,17 @@ export function CarparkFormDialog({
 
   const isEdit = !!carparkId;
 
+  const selectedDestination =
+    (destinations ?? []).find((d) => d._id === form.destinationId) ?? undefined;
+
+  const placeProximity = selectedDestination
+    ? {
+        latitude: selectedDestination.latitude,
+        longitude: selectedDestination.longitude,
+        radiusMeters: 100_000, // 100km
+      }
+    : undefined;
+
   React.useEffect(() => {
     if (!open) return;
     setSubmitError(null);
@@ -210,13 +221,38 @@ export function CarparkFormDialog({
         </DialogHeader>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="grid gap-2">
-            <Label>Search for a place</Label>
-            <PlacesAutocomplete
-              size="sm"
-              fullWidth
-              placeholder="Search address or place..."
-              onPlaceSelect={handlePlaceSelect}
-            />
+            <Label>Destination</Label>
+            <Select
+              value={form.destinationId || undefined}
+              onValueChange={(value) =>
+                update({
+                  destinationId: (value ?? "") as Id<"destinations"> | "",
+                  // Ensure the place search + selected place details match the selected destination.
+                  name: "",
+                  description: "",
+                  address: "",
+                  latitude: "",
+                  longitude: "",
+                })
+              }
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select destination">
+                  {(value: string | undefined) =>
+                    value
+                      ? (destinations ?? []).find((d) => d._id === value)?.name ?? value
+                      : undefined
+                  }
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent side="bottom" alignItemWithTrigger={false}>
+                {(destinations ?? []).map((d) => (
+                  <SelectItem key={d._id} value={d._id}>
+                    {d.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="grid gap-2">
             <Label htmlFor="name">Name</Label>
@@ -287,33 +323,17 @@ export function CarparkFormDialog({
               />
             </div>
           </div>
+
           <div className="grid gap-2">
-            <Label>Destination</Label>
-            <Select
-              value={form.destinationId || undefined}
-              onValueChange={(value) =>
-                update({
-                  destinationId: (value ?? "") as Id<"destinations"> | "",
-                })
-              }
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select destination">
-                  {(value: string | undefined) =>
-                    value
-                      ? (destinations ?? []).find((d) => d._id === value)?.name ?? value
-                      : undefined
-                  }
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent side="bottom" alignItemWithTrigger={false}>
-                {(destinations ?? []).map((d) => (
-                  <SelectItem key={d._id} value={d._id}>
-                    {d.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label>Search for a place</Label>
+            <PlacesAutocomplete
+              key={form.destinationId || "no-destination"}
+              size="sm"
+              fullWidth
+              placeholder="Search address or place..."
+              onPlaceSelect={handlePlaceSelect}
+              proximity={placeProximity}
+            />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="amenities">Amenities (comma-separated)</Label>
