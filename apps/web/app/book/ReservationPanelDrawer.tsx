@@ -1,21 +1,15 @@
 "use client";
 
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-} from "@/components/ui/drawer";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { ReservationPanelContent } from "@/app/book/ReservationPanelContent";
 
-type ReservationPanelDrawerProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-};
+interface IProps {
+  isActive: boolean;
+}
 
-export function ReservationPanelDrawer({ open, onOpenChange }: ReservationPanelDrawerProps) {
+export function ReservationPanelDrawer({ isActive }: IProps) {
   return (
-    <Drawer open={open} onOpenChange={onOpenChange} direction="bottom">
+    <Drawer open={isActive} direction="bottom">
       <DrawerContent variant="sidebar" className="h-[85dvh] max-h-[85dvh]">
         <DrawerHeader className="shrink-0 border-b border-sidebar-border">
           <DrawerTitle>Reservation details</DrawerTitle>
