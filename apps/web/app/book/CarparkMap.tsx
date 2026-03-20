@@ -16,11 +16,12 @@ export interface MapMarker {
 interface CarparkMapProps {
   markers?: MapMarker[];
   className?: string;
+  onMarkerClick?: (markerId: string) => void;
 }
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || "";
 
-export function CarparkMap({ markers = [], className }: CarparkMapProps) {
+export function CarparkMap({ markers = [], className, onMarkerClick }: CarparkMapProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
 
@@ -117,6 +118,7 @@ export function CarparkMap({ markers = [], className }: CarparkMapProps) {
           white-space: nowrap;
         `;
         el.textContent = `${marker.count}`;
+        el.addEventListener("click", () => onMarkerClick?.(marker.id));
 
         const popup = new mapboxgl.Popup({
           offset: 25,
