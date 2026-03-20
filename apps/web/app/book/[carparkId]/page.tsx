@@ -44,7 +44,7 @@ export default function BookCarparkPage() {
                     <MapPin className="h-3.5 w-3.5 text-primary-foreground" />
                   </div>
                   <span className="text-sm font-bold tracking-tight text-foreground">
-                    Carrezo
+                    Red Rope Parking
                   </span>
                 </div>
                 <Button asChild variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">

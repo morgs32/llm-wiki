@@ -7,7 +7,7 @@ import { SiteHeader } from "./SiteHeader";
 import "./theme.css";
 
 export const metadata = {
-  title: "Carrezo Admin",
+  title: "Red Rope Parking Admin",
 };
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {

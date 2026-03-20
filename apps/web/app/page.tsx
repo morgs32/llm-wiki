@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { SignedIn, SignedOut } from "@clerk/clerk-react";
 
 const features = [
   {
@@ -39,54 +38,23 @@ export default function Home() {
     <main>
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/30 bg-background/90 backdrop-blur-lg">
         <div className="flex items-center justify-between px-6 py-4 lg:px-10">
-          <nav className="hidden items-center gap-8 md:flex">
-            {/* <Link
-              href="#about"
-              className="text-sm tracking-wide text-muted-foreground transition-colors hover:text-foreground"
-            >
-              About
-            </Link>
-            <Link
-              href="#benefits"
-              className="text-sm tracking-wide text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Benefits
-            </Link>
-            <Link
-              href="#locations"
-              className="text-sm tracking-wide text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Locations
-            </Link> */}
-          </nav>
-
           <Link href="/" className="absolute left-1/2 -translate-x-1/2">
-            <span className="text-lg font-semibold tracking-tight text-foreground">Carrezo</span>
+            <span className="text-lg font-semibold tracking-tight text-foreground">Red Rope Parking</span>
           </Link>
 
           <div className="flex items-center gap-4 ml-auto">
-            <SignedOut>
-              <Link
-                href="/sign-in"
-                className="text-sm tracking-wide text-muted-foreground transition-colors hover:text-foreground"
-              >
-                Login
-              </Link>
-              <Link
-                href="/sign-up"
-                className="rounded-full border border-foreground bg-foreground px-5 py-2 text-sm font-medium text-background transition-colors hover:bg-transparent hover:text-foreground"
-              >
-                Apply Now
-              </Link>
-            </SignedOut>
-            <SignedIn>
-              <Link
-                href="/book"
-                className="rounded-full border border-foreground bg-foreground px-5 py-2 text-sm font-medium text-background transition-colors hover:bg-transparent hover:text-foreground"
-              >
-                Book
-              </Link>
-            </SignedIn>
+            <Link
+              href="/admin"
+              className="text-sm tracking-wide text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Partners
+            </Link>
+            <Link
+              href="/book"
+              className="rounded-full border border-foreground bg-foreground px-5 py-2 text-sm font-medium text-background transition-colors hover:bg-transparent hover:text-foreground"
+            >
+              Book a spot
+            </Link>
           </div>
         </div>
       </header>

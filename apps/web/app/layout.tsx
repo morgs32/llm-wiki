@@ -12,8 +12,8 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Carrezo",
-  description: "Carrezo is a platform for car parking and valet services.",
+  title: "Red Rope Parking",
+  description: "Red Rope Parking is a platform for car parking and valet services.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

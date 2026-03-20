@@ -39,7 +39,7 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
       <SidebarHeader>
         <Button asChild variant="ghost" size="lg" className="w-full justify-start">
           <Link href="/admin">
-            <span className="font-semibold">Carrezo Admin</span>
+            <span className="font-semibold">Red Rope Parking Admin</span>
           </Link>
         </Button>
       </SidebarHeader>
