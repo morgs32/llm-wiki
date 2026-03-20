@@ -6,20 +6,15 @@ import { MapView } from "@/app/book/MapView";
 import { BookSearchProvider } from "@/app/book/BookSearchContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
 import { PhotoGallery } from "@/app/book/PhotoGallery";
 import { ReservationDetails } from "@/app/book/ReservationDetails";
 import { PriceSummary } from "@/app/book/PriceSummary";
 import { ConfirmButton } from "@/app/book/ConfirmButton";
-import { MapPin, ArrowLeft, X, FileText } from "lucide-react";
+import { MapPin, ArrowLeft, X } from "lucide-react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 export default function BookCarparkPage() {
-  const [detailsOpen, setDetailsOpen] = useState(true);
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   return (
     <BookSearchProvider>
@@ -47,7 +42,12 @@ export default function BookCarparkPage() {
                     Red Rope Parking
                   </span>
                 </div>
-                <Button asChild variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+                <Button
+                  asChild
+                  variant="ghost"
+                  size="icon"
+                  className="text-muted-foreground hover:text-foreground"
+                >
                   <Link href="/book" aria-label="Close">
                     <X className="h-4 w-4" />
                   </Link>
@@ -62,23 +62,13 @@ export default function BookCarparkPage() {
                 </div>
 
                 <div className="flex flex-col gap-6 p-5 md:p-8">
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start gap-2"
-                    onClick={() => setDetailsOpen(true)}
-                  >
-                    <FileText className="h-4 w-4 shrink-0" />
-                    View reservation details
-                  </Button>
+                  <ReservationDetails />
                   <PriceSummary />
 
                   <div className="rounded-xl bg-secondary px-4 py-3">
                     <p className="text-xs leading-relaxed text-muted-foreground">
-                      <span className="font-semibold text-foreground">
-                        Free cancellation
-                      </span>{" "}
-                      up to 24 hours before check-in. After that, a fee of one
-                      day rate applies.
+                      <span className="font-semibold text-foreground">Free cancellation</span> up to
+                      24 hours before check-in. After that, a fee of one day rate applies.
                     </p>
                   </div>
 
@@ -91,10 +81,7 @@ export default function BookCarparkPage() {
       </div>
 
       <Sheet open={detailsOpen} onOpenChange={setDetailsOpen}>
-        <SheetContent
-          side="right"
-          className="flex w-full flex-col gap-0 sm:max-w-lg"
-        >
+        <SheetContent side="right" className="flex w-full flex-col gap-0 sm:max-w-lg">
           <SheetHeader className="shrink-0 border-b border-border pb-4">
             <SheetTitle>Reservation details</SheetTitle>
           </SheetHeader>

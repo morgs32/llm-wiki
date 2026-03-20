@@ -76,7 +76,6 @@ export function PlacesAutocomplete({
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(null);
-  const preventNextOpenRef = useRef(false);
 
   // Fetch autocomplete suggestions
   const fetchSuggestions = useCallback(
@@ -100,23 +99,8 @@ export function PlacesAutocomplete({
       try {
         const res = await fetch(url);
         const data = await res.json();
-
-        if (data.suggestions && data.suggestions.length > 0) {
-          setSuggestions(data.suggestions);
-          if (preventNextOpenRef.current) {
-            preventNextOpenRef.current = false;
-          } else {
-            setIsOpen(true);
-            setActiveIndex(-1);
-          }
-        } else {
-          setSuggestions([]);
-          if (!preventNextOpenRef.current) {
-            setIsOpen(true);
-          } else {
-            preventNextOpenRef.current = false;
-          }
-        }
+        setSuggestions(data.suggestions);
+        setIsOpen(true);
       } catch {
         setSuggestions([]);
       } finally {
@@ -155,8 +139,6 @@ export function PlacesAutocomplete({
     setActiveIndex(-1);
     setQuery(suggestion.mainText);
     setSuggestions([]);
-    preventNextOpenRef.current = true;
-    inputRef.current?.blur();
     setIsLoadingDetails(true);
     setDetailsError(null);
 
@@ -272,11 +254,6 @@ export function PlacesAutocomplete({
             }
           }}
           onKeyDown={handleKeyDown}
-          onFocus={() => {
-            if (suggestions.length > 0 && query.length >= 2) {
-              setIsOpen(true);
-            }
-          }}
           className={cn(
             "rounded-md border-border bg-background shadow-xs focus-visible:ring-2",
             sm ? "h-9 pl-8 pr-8 text-base" : "h-12 pl-10 pr-10 text-lg",
@@ -328,7 +305,11 @@ export function PlacesAutocomplete({
                       ? "bg-accent text-accent-foreground"
                       : "hover:bg-accent/50",
                   )}
-                  onClick={() => selectPlace(suggestion)}
+                  onMouseDown={(e) => {
+                    // Prevent focus/mouseup side-effects so the dropdown reliably closes on selection.
+                    e.preventDefault();
+                    selectPlace(suggestion);
+                  }}
                   onMouseEnter={() => setActiveIndex(index)}
                 >
                   <MapPin
