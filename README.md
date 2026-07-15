@@ -12,11 +12,11 @@ subtree. Start at [`patterns/README.md`](./patterns/README.md).
 From the Zerospin repository root, occasionally pull upstream changes with:
 
 ```bash
-git subtree pull --prefix=subrepos/morgs32-llm-wiki https://github.com/morgs32/llm-wiki.git main --squash
+git subtree pull --prefix=vendor/morgs32/llm-wiki https://github.com/morgs32/llm-wiki.git main --squash
 ```
 
 Publish local subtree changes upstream only after reviewing the split history:
 
 ```bash
-git subtree push --prefix=subrepos/morgs32-llm-wiki https://github.com/morgs32/llm-wiki.git main
+git subtree push --prefix=vendor/morgs32/llm-wiki https://github.com/morgs32/llm-wiki.git main
 ```
