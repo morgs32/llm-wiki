@@ -39,4 +39,5 @@ export const makeCommand = Effect.fn('makeCommand')(function* (props: {
 
 See [index.md](./index.md) for keyword → file lookup.
 
-Zerospin-specific patterns live in the sibling subrepo `llm-wiki/patterns/`.
+Zerospin-specific patterns live in the first-party tree `llm-wiki/patterns/`
+(sibling of this vendored package in Zerospin).
