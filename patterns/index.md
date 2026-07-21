@@ -83,6 +83,7 @@ See [README.md](./README.md) for format.
 | `nextjs/cached-loaders-one-per-file.ts`         | Keep one cached loader in each file               |
 | `nextjs/either-in-shared-cached-loaders.ts`     | Let each RSC consumer choose how to unwrap Either |
 | `nextjs/inline-validate-params-sync.ts`         | /\*\*                                             |
+| `nextjs/navigation-uses-link.ts`                | Render navigation as a Next.js Link               |
 | `nextjs/redirect-notfound-outside-effect.ts`    | /\*\*                                             |
 | `nextjs/route-params-auth-in-default-export.ts` | /\*\*                                             |
 | `nextjs/routepattern-for-sidebar-is-active.ts`  | /\*\*                                             |
