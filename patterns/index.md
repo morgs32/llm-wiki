@@ -50,7 +50,7 @@ See [README.md](./README.md) for format.
 | File                                               | Description |
 | -------------------------------------------------- | ----------- |
 | `functions/avoid-wrapped-yield-casts.ts`           | /\*\*       |
-| `functions/destructure-props-immediately.ts`       | /\*\*       |
+| `functions/destructure-props-immediately.ts`       | `props` arg then first-line `const { … } = props`; not parameter destructuring |
 | `functions/effect-fn-one-props-object.ts`          | /\*\*       |
 | `functions/entrypoint-export-only.ts`              | /\*\*       |
 | `functions/inline-effect-before-yield.ts`          | /\*\*       |
