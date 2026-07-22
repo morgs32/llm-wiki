@@ -156,6 +156,7 @@ See [README.md](./README.md) for format.
 | `tooling/partial-row-interfaces.ts`            | /\*\*       |
 | `tooling/prisma-db-push.md`                    | tooling     |
 | `tooling/read-before-casting.ts`               | /\*\*       |
+| `tooling/story-filename-mirrors-source.ts`     | Name stories after the source file basename |
 | `tooling/table-vs-drizzle-schema-naming.ts`    | /\*\*       |
 | `tooling/tsconfig-split-for-ide.md`            | tooling     |
 | `tooling/validate-before-insert.ts`            | /\*\*       |
