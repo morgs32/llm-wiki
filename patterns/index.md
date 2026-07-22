@@ -57,6 +57,7 @@ See [README.md](./README.md) for format.
 | `functions/inline-one-off-props-types.ts`          | /\*\*       |
 | `functions/make-normalize-optional-collections.ts` | /\*\*       |
 | `functions/mapvalues-not-from-entries.ts`          | /\*\*       |
+| `functions/no-export-single-use-bindings.ts`       | Do not export a binding used only in the same module — inline it |
 | `functions/no-one-off-export-aliases.ts`           | /\*\*       |
 | `functions/separate-helpers-not-overloads.ts`      | /\*\*       |
 
