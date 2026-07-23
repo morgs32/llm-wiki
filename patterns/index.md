@@ -87,6 +87,7 @@ See [README.md](./README.md) for format.
 | `nextjs/route-params-auth-in-default-export.ts` | /\*\*       |
 | `nextjs/routepattern-for-sidebar-is-active.ts`  | /\*\*       |
 | `nextjs/rsc-loader-shell-effect-fn.ts`          | /\*\*       |
+| `nextjs/validated-client-route-params.ts`       | Validate `useParams` with a colocated Effect schema |
 
 ## rpc
 
@@ -104,6 +105,12 @@ See [README.md](./README.md) for format.
 | `rpc/non-rpc-runners-return-effects.ts`          | /\*\*       |
 | `rpc/promise-either-then-get-or-throw.ts`        | Unwrap Promise Either with `then`                  |
 | `rpc/return-either-from-loaders.ts`              | /\*\*       |
+
+## react
+
+| File                                       | Description                                                        |
+| ------------------------------------------ | ------------------------------------------------------------------ |
+| `react/prefer-design-system-components.ts` | Default to existing shadcn components instead of hand-styled HTML |
 
 ## runtime
 
@@ -156,5 +163,6 @@ See [README.md](./README.md) for format.
 | `tooling/read-before-casting.ts`               | /\*\*       |
 | `tooling/table-vs-drizzle-schema-naming.ts`    | /\*\*       |
 | `tooling/tsconfig-split-for-ide.md`            | tooling     |
+| `tooling/zerospin-dev-clean-until-production.ts` | Run local Zerospin development with a detached clean generation |
 | `tooling/validate-before-insert.ts`            | /\*\*       |
 | `tooling/vitest-setup-real-dependencies.ts`    | /\*\*       |
