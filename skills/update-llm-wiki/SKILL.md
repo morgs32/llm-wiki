@@ -117,6 +117,7 @@ change in the current repository's `llm-wiki/patterns/` profile.
    git fetch origin main
    git worktree add -b <topic-branch> <worktree-path> origin/main
    ```
+
 3. Make the source and index changes under `skills/engineering-patterns/`, then
    validate that skill with the Codex skill validator and check its relative
    links.
@@ -143,6 +144,7 @@ change in the current repository's `llm-wiki/patterns/` profile.
    The command chooses add versus update through the Skills CLI, validates the
    installed source and lock metadata, and changes only its marker-bounded block
    in each root `AGENTS.md`.
+
 7. Run the read-only check across the same repositories:
 
    ```bash
