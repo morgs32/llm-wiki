@@ -1,0 +1,4 @@
+interface:
+  display_name: "Update morgs32/llm-wiki"
+  short_description: "Publish shared patterns and skills through a PR"
+  default_prompt: "Use $update-morgs32-llm-wiki to update this repository's patterns or skills through a pull request."

@@ -1,6 +1,6 @@
 # llm-wiki patterns
 
-Shareable code-shape guidance packaged with the `$engineering-patterns` skill.
+Shareable code-shape guidance packaged with the `$patterns` skill.
 
 ## Format
 
