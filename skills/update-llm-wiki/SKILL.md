@@ -81,8 +81,9 @@ If the user invokes this skill with **no additional prompt** (e.g. `/update-llm-
    Add or extend the row in the matching `$engineering-patterns`
    `references/patterns/index.md` or
    [`llm-wiki/patterns/index.md`](../../../llm-wiki/patterns/index.md) so
-   keyword routing finds the new file. Shared changes belong in the source
-   `morgs32/llm-wiki` checkout; validate and reinstall the skill after editing.
+   keyword routing finds the new file. For shared guidance, follow
+   [Publish shared guidance](#publish-shared-guidance); do not edit an installed
+   copy of `$engineering-patterns`.
 
 8. **Keep scope tight**  
    One pattern file per lesson. No unrelated edits elsewhere in the pattern
@@ -90,3 +91,49 @@ If the user invokes this skill with **no additional prompt** (e.g. `/update-llm-
 
 9. **Match repo doc tone**  
    Imperative, specific, and scannable. Prefer “Do X / Don’t Y” in `@bad` tags over narrative.
+
+## Publish shared guidance
+
+Use this workflow only for repo-agnostic guidance under
+`skills/engineering-patterns/`. Repository-specific guidance remains a normal
+change in the current repository's `llm-wiki/patterns/` profile.
+
+1. Treat `morgs32/llm-wiki` `main` as the source of truth. Never edit
+   `~/.agents/skills/engineering-patterns` or another installed agent copy;
+   those files are generated installation output.
+2. Start from current `origin/main` in the source repository. If the normal
+   checkout contains unrelated WIP, preserve it and use a clean isolated
+   worktree or clone.
+3. Make the source and index changes under `skills/engineering-patterns/`, then
+   validate that skill with the Codex skill validator and check its relative
+   links.
+4. When the user has authorized publication, commit only the coherent shared
+   guidance change, push its branch, and open a PR against
+   `morgs32/llm-wiki:main`:
+
+   ```bash
+   git push --set-upstream origin HEAD
+   gh pr create --repo morgs32/llm-wiki --base main --fill
+   ```
+
+5. Wait for required checks and review, merge the PR using the repository's
+   normal policy, and verify that remote `main` contains the merged change.
+   Do not install from a local branch or an unmerged PR.
+6. Refresh only the published global skill through the Skills CLI:
+
+   ```bash
+   npx skills update engineering-patterns -g -y
+   ```
+
+   For a first installation instead of an update, run:
+
+   ```bash
+   npx skills add morgs32/llm-wiki --skill engineering-patterns -g -a codex -y
+   ```
+
+7. Validate the installed copy, confirm `npx skills ls -g --json` reports
+   `morgs32/llm-wiki` as its source, and verify the Skills CLI lock metadata was
+   refreshed.
+
+If the user authorized only a draft or local source edit, stop before pushing
+and report that PR publication and global installation remain pending.
