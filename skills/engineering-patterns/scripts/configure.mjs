@@ -4,6 +4,7 @@ import {
   existsSync,
   lstatSync,
   readFileSync,
+  realpathSync,
   readdirSync,
   renameSync,
   statSync,
@@ -482,7 +483,23 @@ const main = async () => {
   }
 };
 
-if (resolve(process.argv[1] ?? "") === fileURLToPath(import.meta.url)) {
+const isDirectInvocation = () => {
+  const invocationPath = process.argv[1];
+  if (!invocationPath) {
+    return false;
+  }
+
+  try {
+    return (
+      realpathSync(resolve(invocationPath)) ===
+      realpathSync(fileURLToPath(import.meta.url))
+    );
+  } catch {
+    return false;
+  }
+};
+
+if (isDirectInvocation()) {
   main().catch((error) => {
     console.error(error instanceof Error ? error.message : String(error));
     process.exitCode = 1;
