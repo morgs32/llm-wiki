@@ -125,9 +125,12 @@ change in the current repository's `llm-wiki/patterns/` profile.
    connector merge path. Never use an admin bypass. Distinguish an armed PR
    from a merged PR, and verify remote `main` contains the change before
    installing it. Do not install from a local branch or an unmerged PR.
-6. Refresh the published global skill and managed root guidance from the source
-   checkout. This wrapper uses the Skills CLI to install or update the published
-   skill. Pass every affected repository path in the same invocation:
+6. Create a clean isolated checkout of the exact merged `main` SHA verified in
+   step 5, or prove an existing clean checkout is already at that SHA. Do not
+   reuse the detached preparation checkout when connector-authored review fixes
+   moved the PR head. Run the wrapper from the verified published checkout; it
+   uses the Skills CLI to install or update the published skill. Pass every
+   affected repository path in the same invocation:
 
    ```bash
    node skills/engineering-patterns/scripts/configure.mjs /path/to/repository
