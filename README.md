@@ -12,14 +12,23 @@ the shared patterns.
 
 ## Install
 
-Install the shared engineering guidance globally with the Skills CLI:
+From a clean checkout of current `main`, install or update the shared skill and
+configure one or more consuming repositories:
 
 ```bash
-npx skills add morgs32/llm-wiki --skill engineering-patterns -g -a codex -y
+node skills/engineering-patterns/scripts/configure.mjs /path/to/repository
 ```
 
-The installed `~/.agents/skills/engineering-patterns` directory is generated
-output. Make changes in this repository, never in the installed copy.
+The command uses the Skills CLI to install from published `morgs32/llm-wiki`
+and owns only the marker-bounded `Shared engineering patterns` block in each
+root `AGENTS.md`. It preserves all surrounding guidance, normalizes a lowercase
+root `agents.md`, and never edits nested or vendored agent files. Pass multiple
+repository paths to update them together, or use `--check` for a read-only
+drift check.
+
+The installed `~/.agents/skills/engineering-patterns` directory and managed
+`AGENTS.md` block are generated output. Make skill changes in this repository,
+never in the installed copy or between the managed markers.
 
 ## Publish and update shared guidance
 
@@ -31,10 +40,10 @@ Publish source changes before refreshing the global skill:
 3. Commit the coherent change, push the branch, and open a PR against
    `morgs32/llm-wiki:main`.
 4. Merge the PR and verify the change is present on remote `main`.
-5. Only then refresh the installed skill:
+5. Only then refresh the installed skill and managed repository guidance:
 
    ```bash
-   npx skills update engineering-patterns -g -y
+   node skills/engineering-patterns/scripts/configure.mjs /path/to/repository
    ```
 
 Do not install from a local branch or unmerged PR. See
