@@ -30,9 +30,21 @@ do not infer a new universal rule from one example.
 ## Update the shared patterns
 
 Read [the pattern conventions](references/patterns/README.md) before adding or
-changing a shared pattern. Make shared changes in the source
-`morgs32/llm-wiki` skill, update the index in the same pass, validate the skill,
-and then reinstall it. Treat the installed copy as generated output.
+changing a shared pattern. Start from current `origin/main` in a clean branch or
+isolated worktree of the source `morgs32/llm-wiki` repository. Update the skill
+and its pattern index in the same pass, then validate the source skill.
+
+When the user has authorized publication, commit the coherent change, push its
+branch, open and merge a PR against `morgs32/llm-wiki:main`, and verify remote
+`main`. Only after the merge, refresh the published global skill:
+
+```bash
+npx skills update engineering-patterns -g -y
+```
+
+Do not install from a local branch or unmerged PR. Never edit
+`~/.agents/skills/engineering-patterns` or another installed copy directly;
+installed copies are generated output.
 
 Keep product- or repository-specific guidance in that repository's local
 profile or pattern tree. Do not move local architecture, domain vocabulary, or
