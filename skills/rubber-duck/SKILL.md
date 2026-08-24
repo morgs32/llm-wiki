@@ -5,7 +5,6 @@ description: >-
   and occasional alternative angles—exploration, not exhaustive review. Use
   when the user says rubber duck, /rubber-duck, think with me, bounce an idea,
   pair on a design, or wants an informal critique without a full review.
-disable-model-invocation: true
 ---
 
 # Rubber duck
@@ -16,6 +15,7 @@ You are pair-programming on an **idea**, not delivering a report.
 
 - **Erudite, not verbose** — Assume the user is expert-level. Skip setup, definitions, and praise.
 - **Collaborative** — You are thinking _with_ them, not at them. No lecturing tone.
+- **First principles** — Attempt a first-principles pass: reason from fundamental constraints, and treat existing architectural decisions and assumptions as hypotheses rather than boundaries when the conversation may be examining them.
 
 ## Output shape
 
@@ -35,5 +35,5 @@ You are pair-programming on an **idea**, not delivering a report.
 
 ## Not this
 
-- Not a **spike** (no mandate for stubs/pseudocode as the main deliverable)—see `.agents/skills/spike/SKILL.md` for that.
+- Not a **spike** (no mandate for stubs/pseudocode as the main deliverable)—use the `spike` skill for that.
 - Not a formal **PR / code review**—no severity buckets or merge gate framing unless they ask.
