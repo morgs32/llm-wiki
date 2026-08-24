@@ -101,14 +101,28 @@ change in the current repository's `llm-wiki/patterns/` profile.
 1. Treat `morgs32/llm-wiki` `main` as the source of truth. Never edit
    `~/.agents/skills/engineering-patterns` or another installed agent copy;
    those files are generated installation output.
-2. Start from current `origin/main` in the source repository. If the normal
-   checkout contains unrelated WIP, preserve it and use a clean isolated
-   worktree or clone.
+2. Fetch current `origin/main` and create an attached topic branch before
+   changing files. Never commit shared guidance on `main` or from a detached
+   `HEAD`. In a normal clean source checkout, run:
+
+   ```bash
+   git fetch origin main
+   git switch -c <topic-branch> origin/main
+   ```
+
+   If the normal checkout contains unrelated WIP, preserve it and create an
+   isolated worktree with its topic branch in the same command:
+
+   ```bash
+   git fetch origin main
+   git worktree add -b <topic-branch> <worktree-path> origin/main
+   ```
 3. Make the source and index changes under `skills/engineering-patterns/`, then
    validate that skill with the Codex skill validator and check its relative
    links.
 4. When the user has authorized publication, commit only the coherent shared
-   guidance change, push its branch, and open a PR against
+   guidance change. Confirm `git symbolic-ref --quiet --short HEAD` names the
+   topic branch and is not `main`, then push it and open a PR against
    `morgs32/llm-wiki:main`:
 
    ```bash
