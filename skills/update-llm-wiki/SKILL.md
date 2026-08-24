@@ -3,14 +3,15 @@ name: update-llm-wiki
 description: >-
   After a code change, when the user names a pattern, or when invoked with no
   prompt (review the current chat for pattern conclusions), find a useful repo
-  example and codify it as a mock TypeScript pattern under
-  vendor/morgs32/llm-wiki/patterns/ or llm-wiki/patterns/ with @bad
-  JSDoc tags.
+  example and codify it in the shared $engineering-patterns source or the
+  repository's local llm-wiki/patterns profile with @bad JSDoc tags.
 ---
 
 # update-llm-wiki
 
-Use this skill **together with** the change you are making (or right after it). The goal is durable guidance in the `*-llm-wiki` pattern subtrees, grounded in real code shape from this repo.
+Use this skill **together with** the change you are making (or right after it).
+The goal is durable shared or repository-local guidance grounded in real code
+shape from this repo.
 
 ## When to use
 
@@ -28,7 +29,8 @@ If the user invokes this skill with **no additional prompt** (e.g. `/update-llm-
 
 1. **Review the current chat** for discussion, decisions, or conclusions about patterns, idioms, syntax, or stylistic preferences that should outlive the session.
 2. **Extract codifiable lessons** — only what was actually agreed, demonstrated in code, or explicitly requested; not speculative suggestions or unresolved debate.
-3. **Check existing patterns** in `vendor/morgs32/llm-wiki/patterns/` and `llm-wiki/patterns/` — skip anything already stated clearly.
+3. **Check existing patterns** in `$engineering-patterns` and
+   `llm-wiki/patterns/` — skip anything already stated clearly.
 4. For each remaining lesson, follow **Instructions** below (one pattern file per lesson).
 5. If the chat has nothing worth codifying, say so briefly; do not invent patterns.
 
@@ -45,17 +47,26 @@ If the user invokes this skill with **no additional prompt** (e.g. `/update-llm-
    - If no good example exists yet, write a minimal mock that still shows only the preferred approach.
 
 3. **Pick the right pattern home**
-   Search [`vendor/morgs32/llm-wiki/patterns/`](../../../vendor/morgs32/llm-wiki/patterns/index.md) and [`llm-wiki/patterns/`](../../../llm-wiki/patterns/index.md) for an existing pattern on the topic. Prefer **adding a new mock `.ts` file** in the matching topic folder over inventing prose docs.
+   Search `$engineering-patterns` `references/patterns/index.md` and
+   [`llm-wiki/patterns/`](../../../llm-wiki/patterns/index.md) for an existing
+   pattern on the topic. Prefer **adding a new mock `.ts` file** in the matching
+   topic folder over inventing prose docs.
    For **concrete session evidence**, add or extend a page under [`llm-wiki/patterns/cases/`](../../../llm-wiki/patterns/cases/index.md).
-   For routing, use **repository root `AGENTS.md`** [Docs lookup](#docs-lookup). Map topics: repo-agnostic conventions → `vendor/morgs32/llm-wiki/patterns/{functions,naming,runtime,tooling,...}`; Effect/RPC → `vendor/morgs32/llm-wiki/patterns/effect/` or `rpc/`; Zerospin domain → `llm-wiki/patterns/{system-worker,contracts,typescript,error,...}`.
-   **Package-specific lessons** belong in first-party `llm-wiki/`, not generic `vendor/morgs32/llm-wiki`.  
+   For routing, use **repository root `AGENTS.md`** [Docs lookup](#docs-lookup).
+   Map topics: repo-agnostic conventions → `$engineering-patterns`
+   `references/patterns/{functions,naming,runtime,tooling,...}`; Effect/RPC →
+   its `effect/` or `rpc/`; repository domain guidance →
+   `llm-wiki/patterns/{system-worker,contracts,typescript,error,...}`.
+   **Package-specific lessons** belong in first-party `llm-wiki/`, not the
+   shared skill.
    Update **Docs lookup** in `AGENTS.md` when adding patterns that need keyword routing.
 
 4. **Keep `AGENTS.md` indexes in sync**  
    When you add or materially change patterns, update **repository root `AGENTS.md`** in the same pass: add or adjust a row in the **Docs lookup** table (`#docs-lookup`) with Doc path, section link, and keywords.
 
 5. **Write mock TypeScript patterns from the example**  
-   This is the highest-value part. See [`vendor/morgs32/llm-wiki/patterns/README.md`](../../../vendor/morgs32/llm-wiki/patterns/README.md).
+   This is the highest-value part. For shared guidance, read
+   `$engineering-patterns` `references/patterns/README.md`.
    - **Code**: distilled from the repo example; shows only the preferred approach.
    - **Leading JSDoc**: one short sentence stating the rule.
    - **`@bad` JSDoc tags**: one anti-pattern per tag — the thing that caused confusion, bugs, or review churn (often the **before** state from the example you found).
@@ -66,11 +77,16 @@ If the user invokes this skill with **no additional prompt** (e.g. `/update-llm-
    - Treat the **state before** the requested change as **`@bad`** annotations.
    - Treat the **requested remedy** (or the good example you found after the fix) as the code body.
 
-7. **Update subtree indexes**  
-   Add or extend the row in the matching [`vendor/morgs32/llm-wiki/patterns/index.md`](../../../vendor/morgs32/llm-wiki/patterns/index.md) or [`llm-wiki/patterns/index.md`](../../../llm-wiki/patterns/index.md) entry so keyword routing finds the new file.
+7. **Update pattern indexes**
+   Add or extend the row in the matching `$engineering-patterns`
+   `references/patterns/index.md` or
+   [`llm-wiki/patterns/index.md`](../../../llm-wiki/patterns/index.md) so
+   keyword routing finds the new file. Shared changes belong in the source
+   `morgs32/llm-wiki` checkout; validate and reinstall the skill after editing.
 
 8. **Keep scope tight**  
-   One pattern file per lesson. No unrelated edits elsewhere in the subtrees.
+   One pattern file per lesson. No unrelated edits elsewhere in the pattern
+   source or local profile.
 
 9. **Match repo doc tone**  
    Imperative, specific, and scannable. Prefer “Do X / Don’t Y” in `@bad` tags over narrative.

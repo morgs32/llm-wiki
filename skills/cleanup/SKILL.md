@@ -9,15 +9,19 @@ description: >-
 
 # Cleanup
 
-One skill for Zerospin cleanup. **Pattern guidance lives in the `*-llm-wiki` subtrees** — treat them as the canonical good/bad reference, not ad-hoc prose in chat.
+One skill for Zerospin cleanup. Treat the shared `$engineering-patterns`
+skill and the repository's local pattern tree as the canonical good/bad
+references, not ad-hoc prose in chat.
 
 | Subtree                                                                                                     | Scope                                                                                                             |
 | ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| [`vendor/morgs32/llm-wiki/patterns/`](../../../vendor/morgs32/llm-wiki/patterns/index.md)                               | Repo-agnostic code shape — functions, naming, Effect, RPC, runtime, tooling, Next.js, Cloudflare, durable objects |
+| `$engineering-patterns` (`references/patterns/`)                                                                    | Repo-agnostic code shape — functions, naming, Effect, RPC, runtime, tooling, Next.js, Cloudflare, durable objects |
 | [`llm-wiki/patterns/`](../../../llm-wiki/patterns/index.md)             | Zerospin domain — system-worker, contracts, fanout, schemas, examples, TypeScript workspace wiring                |
 | [`llm-wiki/patterns/cases/`](../../../llm-wiki/patterns/cases/index.md) | Session evidence — before/after smells with links to mock `.ts` patterns                                          |
 
-Each pattern is a mock `.ts` file: code shows the **good** shape; **`@bad` JSDoc tags** document anti-patterns. See [`vendor/morgs32/llm-wiki/patterns/README.md`](../../../vendor/morgs32/llm-wiki/patterns/README.md).
+Each pattern is a mock `.ts` file: code shows the **good** shape; **`@bad`
+JSDoc tags** document anti-patterns. Load `$engineering-patterns` and read its
+`references/patterns/README.md` for the shared format.
 
 ## When to invoke
 
@@ -37,13 +41,16 @@ Turn vague readability frustration into a concrete mode. Do not jump straight in
 Always:
 
 1. `AGENTS.md`
-2. The matching topic in [`vendor/morgs32/llm-wiki/patterns/index.md`](../../../vendor/morgs32/llm-wiki/patterns/index.md) or [`llm-wiki/patterns/index.md`](../../../llm-wiki/patterns/index.md) — read the linked mock `.ts` files for the smell you are judging or fixing
+2. The matching topic in `$engineering-patterns`
+   `references/patterns/index.md` or
+   [`llm-wiki/patterns/index.md`](../../../llm-wiki/patterns/index.md) — read
+   the linked mock `.ts` files for the smell you are judging or fixing
 3. When a Zerospin smell matches a [case study](../../../llm-wiki/patterns/cases/index.md), read that case and its linked pattern file fully
 
 Standing defaults (when no tighter match):
 
-- [`vendor/morgs32/llm-wiki/patterns/functions/effect-fn-one-props-object.ts`](../../../vendor/morgs32/llm-wiki/patterns/functions/effect-fn-one-props-object.ts)
-- [`vendor/morgs32/llm-wiki/patterns/naming/no-re-exports-outside-barrels.ts`](../../../vendor/morgs32/llm-wiki/patterns/naming/no-re-exports-outside-barrels.ts) — required for **Imports** mode; cross-package imports → [`vendor/morgs32/llm-wiki/patterns/naming/monorepo-cross-package-imports.ts`](../../../vendor/morgs32/llm-wiki/patterns/naming/monorepo-cross-package-imports.ts)
+- `$engineering-patterns` `references/patterns/functions/effect-fn-one-props-object.ts`
+- `$engineering-patterns` `references/patterns/naming/no-re-exports-outside-barrels.ts` — required for **Imports** mode; cross-package imports → `references/patterns/naming/monorepo-cross-package-imports.ts`
 
 For **Pass** mode, also read:
 
@@ -104,7 +111,7 @@ Use **Pass** for intentional cleanup with patterns, architecture, and optional c
 
 1. **Scope** — User-named files/dirs only ([AGENTS.md](../../../AGENTS.md#rules)). Default microscopic; ask before repo-wide sweep.
 
-2. **Read** — [`vendor/morgs32/llm-wiki/patterns/index.md`](../../../vendor/morgs32/llm-wiki/patterns/index.md) and [`llm-wiki/patterns/cases/index.md`](../../../llm-wiki/patterns/cases/index.md); match smells to case pages and read relevant cases fully.
+2. **Read** — `$engineering-patterns` `references/patterns/index.md` and [`llm-wiki/patterns/cases/index.md`](../../../llm-wiki/patterns/cases/index.md); match smells to case pages and read relevant cases fully.
 
 3. **Architecture check** — If repo roles, finalize, fanout, batch workflow, or trust boundaries: read the matching [`wiki/architecture/`](../../../wiki/architecture/) doc **before** editing ([AGENTS.md — consult architecture docs first](../../../AGENTS.md#consult-architecture-docs-first)).
 
