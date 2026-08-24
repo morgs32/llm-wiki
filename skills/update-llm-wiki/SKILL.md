@@ -133,21 +133,23 @@ change in the current repository's `llm-wiki/patterns/` profile.
 5. Wait for required checks and review, merge the PR using the repository's
    normal policy, and verify that remote `main` contains the merged change.
    Do not install from a local branch or an unmerged PR.
-6. Refresh only the published global skill through the Skills CLI:
+6. Refresh the published global skill and managed root guidance from the source
+   checkout. Pass every affected repository path in the same invocation:
 
    ```bash
-   npx skills update engineering-patterns -g -y
+   node skills/engineering-patterns/scripts/configure.mjs /path/to/repository
    ```
 
-   For a first installation instead of an update, run:
+   The command chooses add versus update through the Skills CLI, validates the
+   installed source and lock metadata, and changes only its marker-bounded block
+   in each root `AGENTS.md`.
+7. Run the read-only check across the same repositories:
 
    ```bash
-   npx skills add morgs32/llm-wiki --skill engineering-patterns -g -a codex -y
+   node skills/engineering-patterns/scripts/configure.mjs --check /path/to/repository
    ```
 
-7. Validate the installed copy, confirm `npx skills ls -g --json` reports
-   `morgs32/llm-wiki` as its source, and verify the Skills CLI lock metadata was
-   refreshed.
+   Require a clean result before reporting publication complete.
 
 If the user authorized only a draft or local source edit, stop before pushing
 and report that PR publication and global installation remain pending.
