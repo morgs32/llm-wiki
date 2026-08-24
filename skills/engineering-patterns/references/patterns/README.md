@@ -1,6 +1,6 @@
 # llm-wiki patterns
 
-Shareable code-shape guidance for LLM-assisted development. Vendored as a git subtree into any repo.
+Shareable code-shape guidance packaged with the `$engineering-patterns` skill.
 
 ## Format
 
@@ -39,5 +39,5 @@ export const makeCommand = Effect.fn('makeCommand')(function* (props: {
 
 See [index.md](./index.md) for keyword → file lookup.
 
-Zerospin-specific patterns live in the first-party tree `llm-wiki/patterns/`
-(sibling of this vendored package in Zerospin).
+Repository-specific patterns stay in that repository's local guidance tree and
+override this shared baseline when they are more specific.
