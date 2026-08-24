@@ -1,0 +1,55 @@
+name: validate-skills
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  validate-skills:
+    name: validate-skills
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+
+      - name: Install validator dependency
+        run: python -m pip install --disable-pip-version-check PyYAML==6.0.3
+
+      - name: Download pinned Codex validator
+        env:
+          VALIDATOR_URL: https://raw.githubusercontent.com/openai/codex/5e32f728f1f86a967c6be057351f12505778df8f/codex-rs/skills/src/assets/samples/skill-creator/scripts/quick_validate.py
+          VALIDATOR_SHA256: 1fd66498c219616fd9249eacdf16c458412ea9065a9d887fd716aeef03907762
+        run: |
+          curl --fail --silent --show-error --location "$VALIDATOR_URL" --output "$RUNNER_TEMP/quick_validate.py"
+          printf '%s  %s\n' "$VALIDATOR_SHA256" "$RUNNER_TEMP/quick_validate.py" | sha256sum --check --strict
+
+      - name: Validate every skill
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          skill_files=(skills/*/SKILL.md)
+          if ((${#skill_files[@]} == 0)); then
+            echo '::error::No skills/*/SKILL.md files found'
+            exit 1
+          fi
+          for skill_file in "${skill_files[@]}"; do
+            skill_dir=${skill_file%/SKILL.md}
+            printf '%s: ' "$skill_dir"
+            python "$RUNNER_TEMP/quick_validate.py" "$skill_dir"
+          done
