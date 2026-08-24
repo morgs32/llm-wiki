@@ -101,41 +101,32 @@ change in the current repository's `llm-wiki/patterns/` profile.
 1. Treat `morgs32/llm-wiki` `main` as the source of truth. Never edit
    `~/.agents/skills/engineering-patterns` or another installed agent copy;
    those files are generated installation output.
-2. Fetch current `origin/main` and create an attached topic branch before
-   changing files. Never commit shared guidance on `main` or from a detached
-   `HEAD`. In a normal clean source checkout, run:
-
-   ```bash
-   git fetch origin main
-   git switch -c <topic-branch> origin/main
-   ```
-
-   If the normal checkout contains unrelated WIP, preserve it and create an
-   isolated worktree with its topic branch in the same command:
-
-   ```bash
-   git fetch origin main
-   git worktree add -b <topic-branch> <worktree-path> origin/main
-   ```
+2. Read the current `main` SHA through `chatgpt-codex-connector`. If the normal
+   source checkout contains unrelated WIP, preserve it and prepare the change
+   in an isolated checkout of that exact SHA. A detached local checkout is fine
+   for preparation because it must not be used to publish.
 
 3. Make the source and index changes under `skills/engineering-patterns/`, then
    validate that skill with the Codex skill validator and check its relative
    links.
-4. When the user has authorized publication, commit only the coherent shared
-   guidance change. Confirm `git symbolic-ref --quiet --short HEAD` names the
-   topic branch and is not `main`, then push it and open a PR against
-   `morgs32/llm-wiki:main`:
-
-   ```bash
-   git push --set-upstream origin HEAD
-   gh pr create --repo morgs32/llm-wiki --base main --fill
-   ```
-
-5. Wait for required checks and review, merge the PR using the repository's
-   normal policy, and verify that remote `main` contains the merged change.
-   Do not install from a local branch or an unmerged PR.
+4. When the user has authorized publication, re-read remote `main`. If its SHA
+   changed while preparing the patch, rebuild and revalidate the change from
+   the new head. Then use `chatgpt-codex-connector` to create a non-`main` topic
+   branch from that exact SHA, create only the coherent shared-guidance commit
+   on that branch, and open a ready PR against `morgs32/llm-wiki:main`. Do not
+   publish with a personal-account Git push or `gh`.
+5. Wait for the required `validate-skills` check and a Codex review on the
+   latest PR head. Automatic review is preferred; request `@codex review`
+   through the connector when bootstrapping or re-reviewing. Resolve findings
+   with connector-authored commits. If the user authorized merge or auto-merge,
+   follow the repository root `AGENTS.md` auto-merge policy and enable
+   auto-merge through the connector; never merge directly or use an admin
+   bypass. Distinguish an armed PR from a merged PR, and verify remote `main`
+   contains the change before installing it. Do not install from a local branch
+   or an unmerged PR.
 6. Refresh the published global skill and managed root guidance from the source
-   checkout. Pass every affected repository path in the same invocation:
+   checkout. This wrapper uses the Skills CLI to install or update the published
+   skill. Pass every affected repository path in the same invocation:
 
    ```bash
    node skills/engineering-patterns/scripts/configure.mjs /path/to/repository

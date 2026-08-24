@@ -29,6 +29,30 @@
 - User instructions always override this file.
 - Do your best to work around existing changes in a file you want to touch.
 
+### Pull request publication and auto-merge
+
+- Use `chatgpt-codex-connector` for GitHub branch, commit, pull-request, review,
+  and auto-merge operations in `morgs32/llm-wiki`. Do not publish through a
+  personal-account Git push or `gh`.
+- Create a non-`main` topic branch from the current remote `main` SHA before
+  creating a publication commit. Never commit or push directly to `main`.
+- A request only to create, open, or draft a pull request does not authorize
+  merge. Enable auto-merge only when the user has also authorized merge or
+  auto-merge for that task.
+- Auto-merge is allowed only when the pull request targets `main`, is ready for
+  review, and changes only `skills/**`, `README.md`, `AGENTS.md`, or
+  `.github/workflows/validate-skills.yml`.
+- Before enabling auto-merge, re-read the pull request and verify its exact
+  head SHA and file list; require the `validate-skills` check to have succeeded
+  for that SHA; require a Codex review to have completed for that SHA with no
+  P0 or P1 finding; and require every review thread to be resolved. Automatic
+  review is preferred; use `@codex review` when bootstrapping or re-reviewing.
+- Enable GitHub auto-merge through `chatgpt-codex-connector`. Never directly
+  merge, bypass protection, force-update `main`, or use an admin override.
+- Report "auto-merge enabled" separately from "merged". Verify remote `main`
+  contains the pull-request commit before refreshing installed skills or
+  downstream repository guidance.
+
 ### Session hygiene
 
 - Suggest running /cost when a session is running long to monitor cache ratio.
