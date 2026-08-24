@@ -9,18 +9,18 @@ description: >-
 
 # Cleanup
 
-One skill for Zerospin cleanup. Treat the shared `$engineering-patterns`
+One skill for Zerospin cleanup. Treat the shared `$patterns`
 skill and the repository's local pattern tree as the canonical good/bad
 references, not ad-hoc prose in chat.
 
 | Subtree                                                                                                     | Scope                                                                                                             |
 | ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `$engineering-patterns` (`references/patterns/`)                                                                    | Repo-agnostic code shape — functions, naming, Effect, RPC, runtime, tooling, Next.js, Cloudflare, durable objects |
+| `$patterns` (`references/patterns/`)                                                                    | Repo-agnostic code shape — functions, naming, Effect, RPC, runtime, tooling, Next.js, Cloudflare, durable objects |
 | [`llm-wiki/patterns/`](../../../llm-wiki/patterns/index.md)             | Zerospin domain — system-worker, contracts, fanout, schemas, examples, TypeScript workspace wiring                |
 | [`llm-wiki/patterns/cases/`](../../../llm-wiki/patterns/cases/index.md) | Session evidence — before/after smells with links to mock `.ts` patterns                                          |
 
 Each pattern is a mock `.ts` file: code shows the **good** shape; **`@bad`
-JSDoc tags** document anti-patterns. Load `$engineering-patterns` and read its
+JSDoc tags** document anti-patterns. Load `$patterns` and read its
 `references/patterns/README.md` for the shared format.
 
 ## When to invoke
@@ -41,7 +41,7 @@ Turn vague readability frustration into a concrete mode. Do not jump straight in
 Always:
 
 1. `AGENTS.md`
-2. The matching topic in `$engineering-patterns`
+2. The matching topic in `$patterns`
    `references/patterns/index.md` or
    [`llm-wiki/patterns/index.md`](../../../llm-wiki/patterns/index.md) — read
    the linked mock `.ts` files for the smell you are judging or fixing
@@ -49,8 +49,8 @@ Always:
 
 Standing defaults (when no tighter match):
 
-- `$engineering-patterns` `references/patterns/functions/effect-fn-one-props-object.ts`
-- `$engineering-patterns` `references/patterns/naming/no-re-exports-outside-barrels.ts` — required for **Imports** mode; cross-package imports → `references/patterns/naming/monorepo-cross-package-imports.ts`
+- `$patterns` `references/patterns/functions/effect-fn-one-props-object.ts`
+- `$patterns` `references/patterns/naming/no-re-exports-outside-barrels.ts` — required for **Imports** mode; cross-package imports → `references/patterns/naming/monorepo-cross-package-imports.ts`
 
 For **Pass** mode, also read:
 
@@ -102,7 +102,8 @@ Choose one mode for the turn. Combine only when the user clearly wants judgment 
 Add one only if needed beyond the modes above:
 
 - [`step-by-step`](../step-by-step/SKILL.md) — structural delete with fallout handled in sequence
-- [`update-llm-wiki`](../update-llm-wiki/SKILL.md) — codify a repeatable lesson from a repo example (also step 6 of **Pass**)
+- [`update-llm-wiki`](../update-llm-wiki/SKILL.md) — codify a repeatable repository-local lesson under `{root}/llm-wiki/**` (also step 6 of **Pass**)
+- `$update-morgs32-llm-wiki` — change shared patterns or source skills through a PR from the canonical repository
 - [`update-architecture`](../update-architecture/SKILL.md) — simplification changes documented topology or flow
 
 ## Pass mode (orchestrated workflow)
@@ -111,7 +112,7 @@ Use **Pass** for intentional cleanup with patterns, architecture, and optional c
 
 1. **Scope** — User-named files/dirs only ([AGENTS.md](../../../AGENTS.md#rules)). Default microscopic; ask before repo-wide sweep.
 
-2. **Read** — `$engineering-patterns` `references/patterns/index.md` and [`llm-wiki/patterns/cases/index.md`](../../../llm-wiki/patterns/cases/index.md); match smells to case pages and read relevant cases fully.
+2. **Read** — `$patterns` `references/patterns/index.md` and [`llm-wiki/patterns/cases/index.md`](../../../llm-wiki/patterns/cases/index.md); match smells to case pages and read relevant cases fully.
 
 3. **Architecture check** — If repo roles, finalize, fanout, batch workflow, or trust boundaries: read the matching [`wiki/architecture/`](../../../wiki/architecture/) doc **before** editing ([AGENTS.md — consult architecture docs first](../../../AGENTS.md#consult-architecture-docs-first)).
 
@@ -119,7 +120,7 @@ Use **Pass** for intentional cleanup with patterns, architecture, and optional c
 
 5. **Execute** — Smallest direct diff. No new abstractions without explicit user approval ([AGENTS.md](../../../AGENTS.md#ask-before-abstractions)).
 
-6. **Codify** — Repeatable lesson → [`update-llm-wiki`](../update-llm-wiki/SKILL.md) (find a useful repo example; add a mock `.ts` pattern with `@bad` JSDoc or extend a [case page](../../../llm-wiki/patterns/cases/index.md)).
+6. **Codify** — Repository-local lesson → [`update-llm-wiki`](../update-llm-wiki/SKILL.md); shared lesson or source-skill change → the canonical repository's `$update-morgs32-llm-wiki` workflow.
 
 7. **Verify**
    - `rg` for deleted symbol references

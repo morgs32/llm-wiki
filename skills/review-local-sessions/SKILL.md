@@ -97,7 +97,7 @@ Extract and tag:
 | Tag              | What to capture                                                                                                                                                                           |
 | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `frustration`    | User correction, repeated instruction, caps, "again", "stop", "DO NOT", "partial", "stub", "you didn't", "why did you", explicit rejection of agent output                                |
-| `doc-request`    | User asks to update **$engineering-patterns**, **llm-wiki/patterns/**, **architecture**, **AGENTS.md**, **TODOS.md**, **.plans/**, README, or "docs stay in sync" |
+| `doc-request`    | User asks to update **$patterns**, **llm-wiki/patterns/**, **architecture**, **AGENTS.md**, **TODOS.md**, **.plans/**, README, or "docs stay in sync" |
 | `recurring-task` | Same task type appears in **≥2 sessions** across either or both sources                                                                                                                   |
 | `skill-attached` | Skills attached or named (`$SkillName`, `<manually_attached_skills>`, Codex `<skills_instructions>`) — note whether the session still went wrong                                          |
 | `agent-mistake`  | Assistant did something the user had to fix: extra refactors, wrapper helpers, wrong runtime boundary, stale doc paths, bolt-on types                                                     |
@@ -135,7 +135,10 @@ Group tagged snippets into **themes**. A theme qualifies for output only if:
 2. **1 session** with strong frustration **and** a clear doc/skill fix, **or**
 3. **≥3 doc-request** mentions of the same doc area (e.g. `zerospin-fanout.md`, `BatchWorkflow.md`).
 
-Drop one-off typos, one-shot tasks, and themes already fully covered by an existing skill (say "already covered by `update-llm-wiki`" and skip).
+Drop one-off typos, one-shot tasks, and themes already fully covered by an
+existing skill. Route active-project `{root}/llm-wiki/**` work to
+`update-llm-wiki` and canonical shared-pattern or source-skill work to
+`update-morgs32-llm-wiki`.
 
 ### 4. Map themes → skill actions
 
@@ -146,7 +149,7 @@ For each surviving theme, pick exactly one action type:
 | **Deepen**            | Skill exists but transcripts show repeated failure modes it doesn't address                                                  |
 | **New skill**         | Recurring multi-step workflow with no skill; propose a concrete name under `.agents/skills/<kebab-name>/`                    |
 | **Rule in AGENTS.md** | Single-line guardrail repeated across sessions; not enough for a full skill                                                  |
-| **Doc-only**          | User asked for cleanup wiki/architecture updates; route to `update-llm-wiki` or `update-architecture` instead of a new skill |
+| **Doc-only**          | Route active-project `llm-wiki/**` to `update-llm-wiki`, canonical shared pattern/skill changes to `update-morgs32-llm-wiki`, and architecture to `update-architecture` |
 
 Prioritize **doc-request** and **frustration** themes over convenience automations.
 
@@ -167,7 +170,7 @@ Output **only** this structure (Markdown). No preamble essay.
 
 ### 1. <Short title>
 
-- **Action:** Deepen `existing-skill` | New skill `<proposed-name>` | Update `AGENTS.md` | Run `update-llm-wiki` / `update-architecture`
+- **Action:** Deepen `existing-skill` | New skill `<proposed-name>` | Update `AGENTS.md` | Run `update-llm-wiki` / `update-morgs32-llm-wiki` / `update-architecture`
 - **Why now:** <one sentence tied to frequency or severity>
 - **Evidence:**
   - **Cursor** — Session [`<6-word title>`](session-uuid) — user: "<quote>"
@@ -205,7 +208,7 @@ Use the next free date; do not overwrite prior reviews. **Do not commit** unless
 1. **Every recommendation must cite ≥1 user quote** from a named session (Cursor uuid or Codex thread id). No quote → no recommendation.
 2. **No generic advice** ("write better tests", "read the code first"). Every item must name a **repo path, skill name, doc file, or workflow step**.
 3. **Frustration-weighted ranking** — sort recommendations by (frustration signals × recurrence × doc-request bonus). Boost themes that appear in **both** Cursor and Codex.
-4. **Doc-update calls are first-class** — if the user asked to sync pattern subtrees or architecture and the agent didn't, recommend `update-llm-wiki` / `update-architecture` with the **exact pattern paths** mentioned in chat.
+4. **Doc-update calls are first-class** — recommend `update-llm-wiki` for active-project `{root}/llm-wiki/**`, `update-morgs32-llm-wiki` for canonical shared patterns or source skills, and `update-architecture` for architecture, always with the exact paths mentioned in chat.
 5. **Do not recommend installing external skills** unless transcripts show a gap **no** repo skill can cover; then use `find-skills` and name the search query you'd run.
 6. **Do not implement skills in this pass** unless the prompt explicitly says to — default is report only.
 

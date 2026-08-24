@@ -1,0 +1,4 @@
+interface:
+  display_name: "Patterns"
+  short_description: "Apply shared engineering code-shape guidance"
+  default_prompt: "Use $patterns to review this change against the shared code-shape guidance."
