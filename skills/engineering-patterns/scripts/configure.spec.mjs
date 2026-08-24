@@ -9,7 +9,9 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { spawnSync } from "node:child_process";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 
 import { configureRepository } from "./configure.mjs";
 
@@ -132,5 +134,22 @@ test("rejects reversed managed markers", () => {
       () => configureRepository({ repository, check: false }),
       /markers are out of order/,
     );
+  });
+});
+
+test("runs when invoked through a symlinked path", () => {
+  withRepository((repository) => {
+    const invocationPath = join(repository, "configure.mjs");
+    symlinkSync(
+      fileURLToPath(new URL("./configure.mjs", import.meta.url)),
+      invocationPath,
+    );
+
+    const result = spawnSync(process.execPath, [invocationPath, "--help"], {
+      encoding: "utf8",
+    });
+
+    assert.equal(result.status, 0, result.stderr);
+    assert.match(result.stdout, /^Usage: configure\.mjs/m);
   });
 });
