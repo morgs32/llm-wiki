@@ -106,6 +106,9 @@ jobs:
           metadata_files = [
               pathlib.Path(value) for value in arguments[separator + 1 :]
           ]
+          discovered_skill_roots = {
+              skill_file.parent.resolve() for skill_file in skill_files
+          }
 
           for skill_file in skill_files:
               try:
@@ -143,6 +146,11 @@ jobs:
                       str(path),
                   )
                   skill_name = path.parents[1].name
+                  skill_root = path.parents[1].resolve()
+                  if skill_root not in discovered_skill_roots:
+                      raise ValueError(
+                          "metadata must belong to a discovered skill entrypoint"
+                      )
 
                   if "interface" in data:
                       interface = data["interface"]
@@ -183,7 +191,6 @@ jobs:
                               "interface.default_prompt must mention the complete "
                               f"${skill_name} token"
                           )
-                      skill_root = path.parents[1].resolve()
                       for icon_key in ("icon_small", "icon_large"):
                           icon = interface.get(icon_key)
                           if icon is None:
