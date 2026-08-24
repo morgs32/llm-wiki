@@ -58,21 +58,18 @@ jobs:
             skills/*/agents/openai.yaml
             .agents/skills/*/agents/openai.yaml
           )
-          for metadata_file in "${metadata_files[@]}"; do
-            python - "$metadata_file" <<'PY'
+          python - "${skill_files[@]}" -- "${metadata_files[@]}" <<'PY'
           import pathlib
           import re
           import sys
 
           import yaml
 
-          path = pathlib.Path(sys.argv[1])
-          skill_name = path.parents[1].name
-
           class UniqueKeyLoader(yaml.SafeLoader):
               pass
 
           def construct_mapping(loader, node, deep=False):
+              loader.flatten_mapping(node)
               mapping = {}
               for key_node, value_node in node.value:
                   key = loader.construct_object(key_node, deep=deep)
@@ -91,92 +88,169 @@ jobs:
                   raise ValueError(f"{location} must be a mapping")
 
           def reject_unknown(value, allowed, location):
-              unknown = sorted(set(value) - set(allowed))
+              unknown = set(value) - set(allowed)
               if unknown:
                   raise ValueError(
-                      f"{location} has unsupported keys: {', '.join(unknown)}"
+                      f"{location} has unsupported keys: "
+                      f"{', '.join(sorted(map(str, unknown)))}"
                   )
 
-          try:
-              data = yaml.load(path.read_text(), Loader=UniqueKeyLoader)
-              require_mapping(data, str(path))
-              reject_unknown(data, {"interface", "dependencies", "policy"}, str(path))
+          def load_mapping(text, location):
+              data = yaml.load(text, Loader=UniqueKeyLoader)
+              require_mapping(data, location)
+              return data
 
-              interface = data.get("interface")
-              if interface is not None:
-                  require_mapping(interface, "interface")
+          arguments = sys.argv[1:]
+          separator = arguments.index("--")
+          skill_files = [pathlib.Path(value) for value in arguments[:separator]]
+          metadata_files = [
+              pathlib.Path(value) for value in arguments[separator + 1 :]
+          ]
+
+          for skill_file in skill_files:
+              try:
+                  content = skill_file.read_text()
+                  match = re.match(r"^---\n(.*?)\n---", content, re.DOTALL)
+                  if match is None:
+                      raise ValueError("invalid frontmatter format")
+                  frontmatter = load_mapping(match.group(1), str(skill_file))
+                  name = frontmatter.get("name")
+                  if not isinstance(name, str) or not name.strip():
+                      raise ValueError("frontmatter.name must be a non-empty string")
+                  if name.strip() != skill_file.parent.name:
+                      raise ValueError(
+                          "frontmatter.name must match its skill directory"
+                      )
+                  description = frontmatter.get("description")
+                  if not isinstance(description, str) or not description.strip():
+                      raise ValueError(
+                          "frontmatter.description must be a non-empty string"
+                      )
+              except (OSError, TypeError, ValueError, yaml.YAMLError) as error:
+                  print(f"::error file={skill_file}::{error}")
+                  raise SystemExit(1)
+
+              print(f"{skill_file}: required frontmatter valid")
+
+          for path in metadata_files:
+              try:
+                  data = load_mapping(path.read_text(), str(path))
+                  if not data:
+                      raise ValueError("metadata must contain a supported section")
                   reject_unknown(
-                      interface,
-                      {
-                          "display_name",
-                          "short_description",
-                          "icon_small",
-                          "icon_large",
-                          "brand_color",
-                          "default_prompt",
-                      },
-                      "interface",
+                      data,
+                      {"interface", "dependencies", "policy"},
+                      str(path),
                   )
-                  for key, value in interface.items():
-                      if not isinstance(value, str):
-                          raise ValueError(f"interface.{key} must be a string")
-                  description = interface.get("short_description")
-                  if description is not None and not 25 <= len(description) <= 64:
-                      raise ValueError(
-                          "interface.short_description must be 25-64 characters"
-                      )
-                  color = interface.get("brand_color")
-                  if color is not None and not re.fullmatch(r"#[0-9A-Fa-f]{6}", color):
-                      raise ValueError("interface.brand_color must be a six-digit hex color")
-                  prompt = interface.get("default_prompt")
-                  if prompt is not None and f"${skill_name}" not in prompt:
-                      raise ValueError(
-                          f"interface.default_prompt must mention ${skill_name}"
-                      )
+                  skill_name = path.parents[1].name
 
-              dependencies = data.get("dependencies")
-              if dependencies is not None:
-                  require_mapping(dependencies, "dependencies")
-                  reject_unknown(dependencies, {"tools"}, "dependencies")
-                  tools = dependencies.get("tools")
-                  if not isinstance(tools, list):
-                      raise ValueError("dependencies.tools must be a list")
-                  for index, tool in enumerate(tools):
-                      location = f"dependencies.tools[{index}]"
-                      require_mapping(tool, location)
+                  interface = data.get("interface")
+                  if interface is not None:
+                      require_mapping(interface, "interface")
                       reject_unknown(
-                          tool,
-                          {"type", "value", "description", "transport", "url"},
-                          location,
+                          interface,
+                          {
+                              "display_name",
+                              "short_description",
+                              "icon_small",
+                              "icon_large",
+                              "brand_color",
+                              "default_prompt",
+                          },
+                          "interface",
                       )
-                      if tool.get("type") != "mcp":
-                          raise ValueError(f"{location}.type must be mcp")
-                      identifier = tool.get("value")
-                      if not isinstance(identifier, str) or not identifier.strip():
+                      for key, value in interface.items():
+                          if not isinstance(value, str) or not value.strip():
+                              raise ValueError(
+                                  f"interface.{key} must be a non-empty string"
+                              )
+                      description = interface.get("short_description")
+                      if description is not None and not 25 <= len(description) <= 64:
                           raise ValueError(
-                              f"{location}.value must be a non-empty MCP identifier"
+                              "interface.short_description must be 25-64 characters"
                           )
-                      for key, value in tool.items():
-                          if not isinstance(value, str):
-                              raise ValueError(f"{location}.{key} must be a string")
+                      color = interface.get("brand_color")
+                      if color is not None and not re.fullmatch(
+                          r"#[0-9A-Fa-f]{6}", color
+                      ):
+                          raise ValueError(
+                              "interface.brand_color must be a six-digit hex color"
+                          )
+                      prompt = interface.get("default_prompt")
+                      tokens = set(re.findall(r"\$[a-z0-9-]+", prompt or ""))
+                      if prompt is not None and f"${skill_name}" not in tokens:
+                          raise ValueError(
+                              "interface.default_prompt must mention the complete "
+                              f"${skill_name} token"
+                          )
+                      skill_root = path.parents[1].resolve()
+                      for icon_key in ("icon_small", "icon_large"):
+                          icon = interface.get(icon_key)
+                          if icon is None:
+                              continue
+                          icon_path = pathlib.Path(icon)
+                          if icon_path.is_absolute():
+                              raise ValueError(
+                                  f"interface.{icon_key} must be relative to the skill"
+                              )
+                          target = (skill_root / icon_path).resolve()
+                          if skill_root not in target.parents or not target.is_file():
+                              raise ValueError(
+                                  f"interface.{icon_key} must reference a skill file"
+                              )
 
-              policy = data.get("policy")
-              if policy is not None:
-                  require_mapping(policy, "policy")
-                  reject_unknown(
-                      policy,
-                      {"allow_implicit_invocation"},
-                      "policy",
-                  )
-                  implicit = policy.get("allow_implicit_invocation")
-                  if not isinstance(implicit, bool):
-                      raise ValueError(
-                          "policy.allow_implicit_invocation must be a boolean"
+                  dependencies = data.get("dependencies")
+                  if dependencies is not None:
+                      require_mapping(dependencies, "dependencies")
+                      reject_unknown(dependencies, {"tools"}, "dependencies")
+                      tools = dependencies.get("tools")
+                      if not isinstance(tools, list) or not tools:
+                          raise ValueError(
+                              "dependencies.tools must be a non-empty list"
+                          )
+                      for index, tool in enumerate(tools):
+                          location = f"dependencies.tools[{index}]"
+                          require_mapping(tool, location)
+                          reject_unknown(
+                              tool,
+                              {
+                                  "type",
+                                  "value",
+                                  "description",
+                                  "transport",
+                                  "url",
+                              },
+                              location,
+                          )
+                          if tool.get("type") != "mcp":
+                              raise ValueError(f"{location}.type must be mcp")
+                          identifier = tool.get("value")
+                          if not isinstance(identifier, str) or not identifier.strip():
+                              raise ValueError(
+                                  f"{location}.value must be a non-empty MCP identifier"
+                              )
+                          for key, value in tool.items():
+                              if not isinstance(value, str) or not value.strip():
+                                  raise ValueError(
+                                      f"{location}.{key} must be a non-empty string"
+                                  )
+
+                  policy = data.get("policy")
+                  if policy is not None:
+                      require_mapping(policy, "policy")
+                      reject_unknown(
+                          policy,
+                          {"allow_implicit_invocation"},
+                          "policy",
                       )
-          except (OSError, ValueError, yaml.YAMLError) as error:
-              print(f"::error file={path}::{error}")
-              raise SystemExit(1)
+                      implicit = policy.get("allow_implicit_invocation")
+                      if not isinstance(implicit, bool):
+                          raise ValueError(
+                              "policy.allow_implicit_invocation must be a boolean"
+                          )
+              except (OSError, TypeError, ValueError, yaml.YAMLError) as error:
+                  print(f"::error file={path}::{error}")
+                  raise SystemExit(1)
 
-          print(f"{path}: metadata valid")
+              print(f"{path}: metadata valid")
           PY
-          done
