@@ -15,18 +15,21 @@ import { dirname, resolve, join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
-const skillName = "engineering-patterns";
+const skillName = "patterns";
+const legacySkillName = "engineering-patterns";
 const skillSource = "morgs32/llm-wiki";
-const markerStart = "<!-- engineering-patterns configuration start-->";
+const markerStart = "<!-- patterns configuration start-->";
 const markerDescription =
   "<!-- Leave the start & end comments to automatically receive updates. -->";
-const markerEnd = "<!-- engineering-patterns configuration end-->";
+const markerEnd = "<!-- patterns configuration end-->";
+const legacyMarkerStart = "<!-- engineering-patterns configuration start-->";
+const legacyMarkerEnd = "<!-- engineering-patterns configuration end-->";
 const nxMarkerStart = "<!-- nx configuration start-->";
 const nxMarkerEnd = "<!-- nx configuration end-->";
 
 const usage = `Usage: configure.mjs [--check] [repository ...]
 
-Install or update the global $engineering-patterns skill and configure each
+Install or update the global $patterns skill and configure each
 repository's root AGENTS.md. When no repository is given, use the current
 working directory.
 
@@ -38,6 +41,11 @@ const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 const managedBlockRegex = new RegExp(
   `${escapeRegExp(markerStart)}[\\s\\S]*?${escapeRegExp(markerEnd)}`,
+  "m",
+);
+
+const legacyManagedBlockRegex = new RegExp(
+  `${escapeRegExp(legacyMarkerStart)}[\\s\\S]*?${escapeRegExp(legacyMarkerEnd)}`,
   "m",
 );
 
@@ -55,17 +63,19 @@ const withoutAnsi = (value) =>
   value.replace(/\u001b\[[0-?]*[ -/]*[@-~]/g, "").replace(/\r/g, "");
 
 const renderManagedBlock = ({ content, newline }) => {
-  const contentWithoutManagedBlock = content.replace(managedBlockRegex, "");
+  const contentWithoutManagedBlock = content
+    .replace(managedBlockRegex, "")
+    .replace(legacyManagedBlockRegex, "");
   const heading = /^# /m.test(contentWithoutManagedBlock) ? "##" : "#";
 
   return [
     markerStart,
     markerDescription,
     "",
-    `${heading} Shared engineering patterns`,
+    `${heading} Shared patterns`,
     "",
     "For TypeScript, Effect, RPC, Next.js, Cloudflare, testing, naming, and",
-    "code-shape work, invoke `$engineering-patterns` before editing or reviewing",
+    "code-shape work, invoke `$patterns` before editing or reviewing",
     "code. Start at `references/patterns/index.md`, read only the patterns relevant",
     "to the task, and treat this repository's `AGENTS.md` and any repository-local",
     "pattern index as higher-precedence guidance.",
@@ -103,14 +113,20 @@ const addManagedBlock = ({ content, block, newline }) => {
 };
 
 const expectedAgentsContent = (content) => {
-  if (count(content, markerStart) !== count(content, markerEnd)) {
-    throw new Error("managed engineering-patterns markers are unbalanced");
+  if (
+    count(content, markerStart) !== count(content, markerEnd) ||
+    count(content, legacyMarkerStart) !== count(content, legacyMarkerEnd)
+  ) {
+    throw new Error("managed patterns markers are unbalanced");
   }
-  if (count(content, markerStart) > 1) {
-    throw new Error("multiple managed engineering-patterns blocks found");
+  if (count(content, markerStart) + count(content, legacyMarkerStart) > 1) {
+    throw new Error("multiple managed patterns blocks found");
   }
-  if (content.indexOf(markerStart) > content.indexOf(markerEnd)) {
-    throw new Error("managed engineering-patterns markers are out of order");
+  if (
+    content.indexOf(markerStart) > content.indexOf(markerEnd) ||
+    content.indexOf(legacyMarkerStart) > content.indexOf(legacyMarkerEnd)
+  ) {
+    throw new Error("managed patterns markers are out of order");
   }
   if (count(content, nxMarkerStart) !== count(content, nxMarkerEnd)) {
     throw new Error("managed Nx markers are unbalanced");
@@ -124,13 +140,20 @@ const expectedAgentsContent = (content) => {
 
   const newline = content.includes("\r\n") ? "\r\n" : "\n";
   const block = renderManagedBlock({ content, newline });
-  const currentBlock = content.match(managedBlockRegex)?.[0];
+  const currentBlock =
+    content.match(managedBlockRegex)?.[0] ??
+    content.match(legacyManagedBlockRegex)?.[0];
 
   if (currentBlock) {
     if (withoutWhitespace(currentBlock) === withoutWhitespace(block)) {
       return content;
     }
-    return content.replace(managedBlockRegex, block);
+    return content.replace(
+      content.includes(markerStart)
+        ? managedBlockRegex
+        : legacyManagedBlockRegex,
+      block,
+    );
   }
 
   return addManagedBlock({ content, block, newline });
@@ -226,10 +249,10 @@ const runSkills = (args, { capture = false } = {}) => {
   return capture ? result.stdout : "";
 };
 
-const readInstalledSkill = () => {
+const readInstalledSkill = (name) => {
   const output = runSkills(["list", "-g", "--json"], { capture: true });
   const installedSkills = JSON.parse(output);
-  return installedSkills.find((skill) => skill.name === skillName);
+  return installedSkills.find((skill) => skill.name === name);
 };
 
 const readInstalledSkillLock = (installedSkill) => {
@@ -281,7 +304,7 @@ const verifySkillLock = (installedSkill) => {
   if (entry.source !== skillSource || entry.sourceType !== "github") {
     return "global skill lock source does not match morgs32/llm-wiki";
   }
-  if (entry.skillPath !== "skills/engineering-patterns/SKILL.md") {
+  if (entry.skillPath !== "skills/patterns/SKILL.md") {
     return `global skill lock path is ${entry.skillPath ?? "missing"}`;
   }
   if (!entry.skillFolderHash) {
@@ -301,24 +324,24 @@ const readRemoteSkillHash = async () => {
     {
       headers: {
         Accept: "application/vnd.github+json",
-        "User-Agent": "engineering-patterns-configure",
+        "User-Agent": "patterns-configure",
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
     },
   );
   if (!response.ok) {
     throw new Error(
-      `could not read published engineering-patterns tree: GitHub returned ${response.status}`,
+      `could not read published patterns tree: GitHub returned ${response.status}`,
     );
   }
 
   const tree = await response.json();
   const entry = tree.tree?.find(
     (item) =>
-      item.path === "skills/engineering-patterns" && item.type === "tree",
+      item.path === "skills/patterns" && item.type === "tree",
   );
   if (!entry?.sha) {
-    throw new Error("published engineering-patterns tree was not found");
+    throw new Error("published patterns tree was not found");
   }
 
   return entry.sha;
@@ -363,7 +386,8 @@ const requireSuccessfulUpdate = (output) => {
 };
 
 const configureGlobalSkill = async ({ check }) => {
-  const installedBefore = readInstalledSkill();
+  const installedBefore = readInstalledSkill(skillName);
+  const legacyInstalledBefore = readInstalledSkill(legacySkillName);
   if (
     installedBefore &&
     (installedBefore.source !== skillSource ||
@@ -371,6 +395,15 @@ const configureGlobalSkill = async ({ check }) => {
   ) {
     throw new Error(
       `refusing to replace ${skillName} from ${installedBefore.source ?? "an unknown source"}`,
+    );
+  }
+  if (
+    legacyInstalledBefore &&
+    (legacyInstalledBefore.source !== skillSource ||
+      legacyInstalledBefore.sourceType !== "github")
+  ) {
+    throw new Error(
+      `refusing to remove ${legacySkillName} from ${legacyInstalledBefore.source ?? "an unknown source"}`,
     );
   }
 
@@ -399,8 +432,8 @@ const configureGlobalSkill = async ({ check }) => {
     }
   }
 
-  const installedAfter = readInstalledSkill();
-  const problem =
+  const installedAfter = readInstalledSkill(skillName);
+  let problem =
     verifyInstalledSkill(installedAfter) ?? verifySkillLock(installedAfter);
   if (problem && !check) {
     throw new Error(problem);
@@ -418,6 +451,10 @@ const configureGlobalSkill = async ({ check }) => {
     }
     return { status: "outdated", problem: staleProblem };
   }
+  if (check && legacyInstalledBefore) {
+    const legacyProblem = `legacy global ${legacySkillName} skill remains installed`;
+    problem = problem ? `${problem}; ${legacyProblem}` : legacyProblem;
+  }
 
   return {
     status: !installedBefore
@@ -427,6 +464,7 @@ const configureGlobalSkill = async ({ check }) => {
       : hashBefore === hashAfter
         ? "current"
         : "updated",
+    legacyInstalled: Boolean(legacyInstalledBefore),
     problem,
   };
 };
@@ -462,7 +500,7 @@ const main = async () => {
   if (globalSkill.problem) {
     stale = true;
     console.error(`OUTDATED global ${skillName}: ${globalSkill.problem}`);
-  } else {
+  } else if (options.check || !globalSkill.legacyInstalled) {
     console.log(`${globalSkill.status.toUpperCase()} global ${skillName}`);
   }
 
@@ -476,6 +514,14 @@ const main = async () => {
     } else {
       console.log(`CURRENT ${result.path}`);
     }
+  }
+
+  if (!options.check && globalSkill.legacyInstalled) {
+    runSkills(["remove", legacySkillName, "-g", "-y"]);
+    if (readInstalledSkill(legacySkillName)) {
+      throw new Error(`legacy global ${legacySkillName} skill is still installed`);
+    }
+    console.log(`MIGRATED global ${skillName}`);
   }
 
   if (options.check && stale) {
