@@ -43,9 +43,9 @@ jobs:
         run: |
           set -euo pipefail
           shopt -s nullglob
-          skill_files=(skills/*/SKILL.md)
+          skill_files=(skills/*/SKILL.md .agents/skills/*/SKILL.md)
           if ((${#skill_files[@]} == 0)); then
-            echo '::error::No skills/*/SKILL.md files found'
+            echo '::error::No skill entrypoints found'
             exit 1
           fi
           for skill_file in "${skill_files[@]}"; do
@@ -54,7 +54,10 @@ jobs:
             python "$RUNNER_TEMP/quick_validate.py" "$skill_dir"
           done
 
-          metadata_files=(skills/*/agents/openai.yaml)
+          metadata_files=(
+            skills/*/agents/openai.yaml
+            .agents/skills/*/agents/openai.yaml
+          )
           for metadata_file in "${metadata_files[@]}"; do
             python - "$metadata_file" <<'PY'
           import pathlib
