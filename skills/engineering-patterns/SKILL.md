@@ -36,11 +36,17 @@ and its pattern index in the same pass, then validate the source skill.
 
 When the user has authorized publication, commit the coherent change, push its
 branch, open and merge a PR against `morgs32/llm-wiki:main`, and verify remote
-`main`. Only after the merge, refresh the published global skill:
+`main`. Only after the merge, refresh the published global skill and each
+consumer's managed root guidance from the source checkout:
 
 ```bash
-npx skills update engineering-patterns -g -y
+node skills/engineering-patterns/scripts/configure.mjs /path/to/repository
 ```
+
+Pass multiple repository paths to update them together. Use `--check` to verify
+the global installation source, root `AGENTS.md` casing, and managed guidance
+without writing. The command owns only its marker-bounded block and must not be
+used to edit nested or vendored agent files.
 
 Do not install from a local branch or unmerged PR. Never edit
 `~/.agents/skills/engineering-patterns` or another installed copy directly;

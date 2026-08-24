@@ -72,7 +72,7 @@ Do **not** wait for process exit on `dev` / `wrangler dev` — they stay up. Aft
 
 ### Research and docs routing
 
-- Static guidance: [`skills/engineering-patterns/references/patterns/`](./skills/engineering-patterns/references/patterns/index.md), [`llm-wiki/patterns/`](./llm-wiki/patterns/index.md). Workflow skills: [`.agents/skills/`](./.agents/skills/).
+- Shared pattern source: [`skills/engineering-patterns/references/patterns/`](./skills/engineering-patterns/references/patterns/index.md). Project-local guidance: [`llm-wiki/patterns/`](./llm-wiki/patterns/index.md). Workflow skills: [`.agents/skills/`](./.agents/skills/).
 - Every task: use [Docs lookup](#docs-lookup) for keyword-to-section routing.
 - Local Effect reference: Effect v4 is cloned to `~/.local/share/effect-solutions/effect` for APIs, examples, and implementation details when docs are not enough.
 
@@ -445,6 +445,19 @@ Use this table to route requests to the right pattern sections (by keyword). See
 | `./llm-wiki/patterns/apis/trust-boundary-validation-in-api-not-repo.ts`         | [Good vs bad: trust-boundary validation in *Api, not *Repo](./llm-wiki/patterns/apis/trust-boundary-validation-in-api-not-repo.ts)                                            | Repo validation, Api owns validation, SystemWorker validation, persistence layer, trust boundary                                                                                                                                                                               |
 | `./llm-wiki/patterns/apis/api-gateway-jsdoc-in-sync.ts`                         | [Keep public gateway JSDoc in sync](./llm-wiki/patterns/apis/api-gateway-jsdoc-in-sync.ts)                                                                                    | FrontendApi, SystemApi, ZerospinApis, architecture JSDoc                                                                                                                                                                                                                        |
 | `./.agents/skills/update-architecture/SKILL.md`                                                   | [When to apply](./.agents/skills/update-architecture/SKILL.md#when-to-apply)                                                                                                                   | update architecture, architecture docs, workflow docs, mermaid, wiki/architecture, update-architecture, Trigger, Annotated workflow steps                                                                                                                                      |
+
+<!-- engineering-patterns configuration start-->
+<!-- Leave the start & end comments to automatically receive updates. -->
+
+## Shared engineering patterns
+
+For TypeScript, Effect, RPC, Next.js, Cloudflare, testing, naming, and
+code-shape work, invoke `$engineering-patterns` before editing or reviewing
+code. Start at `references/patterns/index.md`, read only the patterns relevant
+to the task, and treat this repository's `AGENTS.md` and any repository-local
+pattern index as higher-precedence guidance.
+
+<!-- engineering-patterns configuration end-->
 
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->
