@@ -144,8 +144,8 @@ jobs:
                   )
                   skill_name = path.parents[1].name
 
-                  interface = data.get("interface")
-                  if interface is not None:
+                  if "interface" in data:
+                      interface = data["interface"]
                       require_mapping(interface, "interface")
                       reject_unknown(
                           interface,
@@ -199,8 +199,8 @@ jobs:
                                   f"interface.{icon_key} must reference a skill file"
                               )
 
-                  dependencies = data.get("dependencies")
-                  if dependencies is not None:
+                  if "dependencies" in data:
+                      dependencies = data["dependencies"]
                       require_mapping(dependencies, "dependencies")
                       reject_unknown(dependencies, {"tools"}, "dependencies")
                       tools = dependencies.get("tools")
@@ -235,8 +235,8 @@ jobs:
                                       f"{location}.{key} must be a non-empty string"
                                   )
 
-                  policy = data.get("policy")
-                  if policy is not None:
+                  if "policy" in data:
+                      policy = data["policy"]
                       require_mapping(policy, "policy")
                       reject_unknown(
                           policy,
