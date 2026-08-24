@@ -13,10 +13,15 @@
  * Usage:
  *   node ci-poll-decide.mjs '<ci_info_json>' <poll_count> <verbosity> \
  *     [--wait-mode] [--prev-cipe-url <url>] [--expected-sha <sha>] \
- *     [--prev-status <status>] [--timeout <seconds>] [--new-cipe-timeout <seconds>] \
- *     [--env-rerun-count <n>] [--no-progress-count <n>] \
+ *     [--prev-status <status>] [--timeout <minutes>] [--new-cipe-timeout <minutes>] \
+ *     [--elapsed-seconds <n>] [--env-rerun-count <n>] [--no-progress-count <n>] \
  *     [--prev-cipe-status <status>] [--prev-sh-status <status>] \
  *     [--prev-verification-status <status>] [--prev-failure-classification <status>]
+ *
+ * Note: --timeout and --new-cipe-timeout are accepted in MINUTES (matching the
+ * skill's documented flags) and converted to seconds internally. --elapsed-seconds
+ * is the wall-clock time since monitoring began, carried across attempts by the
+ * orchestrator, and is the authoritative signal for the --timeout budget.
  */
 
 // --- Arg parsing ---
@@ -39,8 +44,14 @@ const waitMode = getFlag('--wait-mode');
 const prevCipeUrl = getArg('--prev-cipe-url');
 const expectedSha = getArg('--expected-sha');
 const prevStatus = getArg('--prev-status');
-const timeoutSeconds = parseInt(getArg('--timeout') || '0', 10);
-const newCipeTimeoutSeconds = parseInt(getArg('--new-cipe-timeout') || '0', 10);
+// Flags are documented in minutes; convert to seconds for internal comparison.
+const timeoutSeconds = parseInt(getArg('--timeout') || '0', 10) * 60;
+const newCipeTimeoutSeconds =
+  parseInt(getArg('--new-cipe-timeout') || '0', 10) * 60;
+// Wall-clock seconds since monitoring began (carried across attempts); null when
+// the orchestrator doesn't supply it (see isTimedOut for that fallback).
+const elapsedArg = getArg('--elapsed-seconds');
+const elapsedSeconds = elapsedArg !== null ? parseInt(elapsedArg, 10) : null;
 const envRerunCount = parseInt(getArg('--env-rerun-count') || '0', 10);
 const inputNoProgressCount = parseInt(getArg('--no-progress-count') || '0', 10);
 const prevCipeStatus = getArg('--prev-cipe-status');
@@ -125,6 +136,11 @@ function hasStateChanged() {
 
 function isTimedOut() {
   if (timeoutSeconds <= 0) return false;
+  // Prefer real wall-clock elapsed (carried across attempts) so --timeout caps
+  // total monitor duration, not a single invocation.
+  if (elapsedSeconds !== null && !Number.isNaN(elapsedSeconds))
+    return elapsedSeconds >= timeoutSeconds;
+  // Fallback: estimate elapsed from poll cadence within this invocation.
   const avgDelay = pollCount === 0 ? 0 : backoff(Math.floor(pollCount / 2));
   return pollCount * avgDelay >= timeoutSeconds;
 }
@@ -148,36 +164,41 @@ function isNewCipe() {
 //
 // Decision priority (top wins):
 //   WAIT MODE:
-//     1. new CI Attempt detected         → poll  (new_cipe_detected)
-//     2. wait timed out                  → done  (no_new_cipe)
-//     3. still waiting                   → wait  (waiting_for_cipe)
+//     1. total polling timeout           → done  (polling_timeout)
+//     2. new CI Attempt detected         → poll  (new_cipe_detected)
+//     3. wait timed out                  → done  (no_new_cipe)
+//     4. still waiting                   → wait  (waiting_for_cipe)
 //   NORMAL MODE:
-//     4. polling timeout                 → done  (polling_timeout)
-//     5. circuit breaker (13 polls)      → done  (circuit_breaker)
-//     6. CI succeeded                    → done  (ci_success)
-//     7. CI canceled                     → done  (cipe_canceled)
-//     8. CI timed out                    → done  (cipe_timed_out)
-//     9. CI failed, no tasks recorded    → done  (cipe_no_tasks)
-//    10. environment failure             → done  (environment_rerun_cap | environment_issue)
-//    11. self-healing throttled          → done  (self_healing_throttled)
-//    12. CI in progress / not started    → poll  (ci_running)
-//    13. self-healing in progress        → poll  (sh_running)
-//    14. flaky task auto-rerun           → poll  (flaky_rerun)
-//    15. fix auto-applied                → poll  (fix_auto_applied)
-//    16. auto-apply: skipped             → done  (fix_auto_apply_skipped)
-//    17. auto-apply: verification pending→ poll  (verification_pending)
-//    18. auto-apply: verified            → done  (fix_auto_applying)
-//    19. fix: verification failed/none   → done  (fix_needs_review)
-//    20. fix: all/e2e verified           → done  (fix_apply_ready)
-//    21. fix: needs local verify         → done  (fix_needs_local_verify)
-//    22. self-healing failed             → done  (fix_failed)
-//    23. no fix available                → done  (no_fix)
-//    24. fallback                        → poll  (fallback)
+//     5. polling timeout                 → done  (polling_timeout)
+//     6. circuit breaker (13 polls)      → done  (circuit_breaker)
+//     7. CI succeeded                    → done  (ci_success)
+//     8. CI canceled                     → done  (cipe_canceled)
+//     9. CI timed out                    → done  (cipe_timed_out)
+//    10. CI failed, no tasks recorded    → done  (cipe_no_tasks)
+//    11. environment failure             → done  (environment_rerun_cap | environment_issue)
+//    12. self-healing throttled          → done  (self_healing_throttled)
+//    13. CI in progress / not started    → poll  (ci_running)
+//    14. self-healing in progress        → poll  (sh_running)
+//    15. flaky task auto-rerun           → poll  (flaky_rerun)
+//    16. fix auto-applied                → poll  (fix_auto_applied)
+//    17. auto-apply: skipped             → done  (fix_auto_apply_skipped)
+//    18. auto-apply: verification pending→ poll  (verification_pending)
+//    19. auto-apply: verified            → done  (fix_auto_applying)
+//    20. fix: verification failed/none   → done  (fix_needs_review)
+//    21. fix: all/e2e verified           → done  (fix_apply_ready)
+//    22. fix: needs local verify         → done  (fix_needs_local_verify)
+//    23. self-healing failed             → done  (fix_failed)
+//    24. no fix available                → done  (no_fix)
+//    25. fallback                        → poll  (fallback)
 // ============================================================
 
 function classify() {
   // --- Wait mode ---
   if (waitMode) {
+    // The total --timeout budget also caps time spent waiting for a new CI
+    // Attempt, so it must win over --new-cipe-timeout here; otherwise a long
+    // wait (or a sequence of apply→wait cycles) could run past --timeout.
+    if (isTimedOut()) return { action: 'done', code: 'polling_timeout' };
     if (isNewCipe()) return { action: 'poll', code: 'new_cipe_detected' };
     if (isWaitTimedOut()) return { action: 'done', code: 'no_new_cipe' };
     return { action: 'wait', code: 'waiting_for_cipe' };

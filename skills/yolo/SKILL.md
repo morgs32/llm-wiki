@@ -3,7 +3,6 @@ name: yolo
 description: >-
   Enforces yolo-mode cleanup: when a migration is completed, remove the old
   compatibility path instead of preserving it for legacy callers.
-disable-model-invocation: true
 ---
 
 # Yolo mode
