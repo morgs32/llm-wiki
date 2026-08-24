@@ -4,7 +4,6 @@ description: >-
   Grill a fuzzy plan one question at a time (chat only), then synthesize a
   numbered design spec under .plans/specs/. Use when the user says /spec, wants
   a design spec, or wants grill + to-spec before implementation.
-disable-model-invocation: true
 ---
 
 # Spec (grill → design doc)
