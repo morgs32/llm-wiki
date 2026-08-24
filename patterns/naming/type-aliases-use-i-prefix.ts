@@ -1,8 +1,17 @@
 /**
- * Type aliases and indexed access types are type names — prefix with `I`.
+ * Named domain types — interfaces and aliases — start with `I`.
+ * Extractor utilities use `Infer*` instead (see `infer-utility-types.ts`).
  *
- * @bad `export type OrderRunStatus = (typeof runStatuses)[number]` — PascalCase without `I`.
+ * @bad `export interface Command<…>` — PascalCase interface without `I`.
+ * @bad `export type MachineStateTuple = …` — PascalCase alias without `I`.
  */
-export type IOrderStatus = (typeof orderStatuses)[number];
+export interface ICommand<NAME extends string> {
+  readonly name: NAME;
+}
 
-const orderStatuses = ['pending', 'shipped', 'delivered'] as const;
+export type IAnyCommand = ICommand<string>;
+
+export type IMachineStateTuple = readonly [
+  { readonly key: string },
+  ...Array<{ readonly key: string }>
+];

@@ -67,13 +67,14 @@ See [README.md](./README.md) for format.
 | -------------------------------------------- | --------------------------------------------------------------- |
 | `naming/avoid-abbreviations.ts`              | /\*\*                                                           |
 | `naming/dynamic-module-reads.ts`             | /\*\*                                                           |
-| `naming/generic-type-parameters-all-caps.ts` | /\*\*                                                           |
+| `naming/generic-type-parameters-all-caps.ts` | Generic type parameters use `ALL_CAPS`                          |
+| `naming/infer-utility-types.ts`              | Extractor utilities use `Infer*`, not `I*`                      |
 | `naming/monorepo-cross-package-imports.ts`   | /\*\*                                                           |
 | `naming/no-re-exports-outside-barrels.ts`    | Import from the defining module; do not re-export from features |
 | `naming/package-barrels-index-ts.ts`         | Keep package aggregation in `index.ts` barrels                  |
 | `naming/relative-paths-with-extensions.ts`   | /\*\*                                                           |
 | `naming/repo-table-shapes-inline.ts`         | /\*\*                                                           |
-| `naming/type-aliases-use-i-prefix.ts`        | Prefix named type aliases with `I`                              |
+| `naming/type-aliases-use-i-prefix.ts`        | Prefix named domain interfaces and aliases with `I`             |
 | `naming/types-live-in-types-ts.ts`           | /\*\*                                                           |
 
 ## nextjs
