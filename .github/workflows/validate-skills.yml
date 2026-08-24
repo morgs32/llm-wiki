@@ -53,3 +53,122 @@ jobs:
             printf '%s: ' "$skill_dir"
             python "$RUNNER_TEMP/quick_validate.py" "$skill_dir"
           done
+
+          metadata_files=(skills/*/agents/openai.yaml)
+          for metadata_file in "${metadata_files[@]}"; do
+            python - "$metadata_file" <<'PY'
+          import pathlib
+          import re
+          import sys
+
+          import yaml
+
+          path = pathlib.Path(sys.argv[1])
+          skill_name = path.parents[1].name
+
+          class UniqueKeyLoader(yaml.SafeLoader):
+              pass
+
+          def construct_mapping(loader, node, deep=False):
+              mapping = {}
+              for key_node, value_node in node.value:
+                  key = loader.construct_object(key_node, deep=deep)
+                  if key in mapping:
+                      raise ValueError(f"duplicate key: {key}")
+                  mapping[key] = loader.construct_object(value_node, deep=deep)
+              return mapping
+
+          UniqueKeyLoader.add_constructor(
+              yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+              construct_mapping,
+          )
+
+          def require_mapping(value, location):
+              if not isinstance(value, dict):
+                  raise ValueError(f"{location} must be a mapping")
+
+          def reject_unknown(value, allowed, location):
+              unknown = sorted(set(value) - set(allowed))
+              if unknown:
+                  raise ValueError(
+                      f"{location} has unsupported keys: {', '.join(unknown)}"
+                  )
+
+          try:
+              data = yaml.load(path.read_text(), Loader=UniqueKeyLoader)
+              require_mapping(data, str(path))
+              reject_unknown(data, {"interface", "dependencies", "policy"}, str(path))
+
+              interface = data.get("interface")
+              if interface is not None:
+                  require_mapping(interface, "interface")
+                  reject_unknown(
+                      interface,
+                      {
+                          "display_name",
+                          "short_description",
+                          "icon_small",
+                          "icon_large",
+                          "brand_color",
+                          "default_prompt",
+                      },
+                      "interface",
+                  )
+                  for key, value in interface.items():
+                      if not isinstance(value, str):
+                          raise ValueError(f"interface.{key} must be a string")
+                  description = interface.get("short_description")
+                  if description is not None and not 25 <= len(description) <= 64:
+                      raise ValueError(
+                          "interface.short_description must be 25-64 characters"
+                      )
+                  color = interface.get("brand_color")
+                  if color is not None and not re.fullmatch(r"#[0-9A-Fa-f]{6}", color):
+                      raise ValueError("interface.brand_color must be a six-digit hex color")
+                  prompt = interface.get("default_prompt")
+                  if prompt is not None and f"${skill_name}" not in prompt:
+                      raise ValueError(
+                          f"interface.default_prompt must mention ${skill_name}"
+                      )
+
+              dependencies = data.get("dependencies")
+              if dependencies is not None:
+                  require_mapping(dependencies, "dependencies")
+                  reject_unknown(dependencies, {"tools"}, "dependencies")
+                  tools = dependencies.get("tools")
+                  if not isinstance(tools, list):
+                      raise ValueError("dependencies.tools must be a list")
+                  for index, tool in enumerate(tools):
+                      location = f"dependencies.tools[{index}]"
+                      require_mapping(tool, location)
+                      reject_unknown(
+                          tool,
+                          {"type", "value", "description", "transport", "url"},
+                          location,
+                      )
+                      if tool.get("type") != "mcp":
+                          raise ValueError(f"{location}.type must be mcp")
+                      for key, value in tool.items():
+                          if not isinstance(value, str):
+                              raise ValueError(f"{location}.{key} must be a string")
+
+              policy = data.get("policy")
+              if policy is not None:
+                  require_mapping(policy, "policy")
+                  reject_unknown(
+                      policy,
+                      {"allow_implicit_invocation"},
+                      "policy",
+                  )
+                  implicit = policy.get("allow_implicit_invocation")
+                  if not isinstance(implicit, bool):
+                      raise ValueError(
+                          "policy.allow_implicit_invocation must be a boolean"
+                      )
+          except (OSError, ValueError, yaml.YAMLError) as error:
+              print(f"::error file={path}::{error}")
+              raise SystemExit(1)
+
+          print(f"{path}: metadata valid")
+          PY
+          done
