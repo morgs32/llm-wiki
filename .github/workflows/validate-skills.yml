@@ -109,6 +109,20 @@ jobs:
           discovered_skill_roots = {
               skill_file.parent.resolve() for skill_file in skill_files
           }
+          candidate_skill_roots = {
+              candidate.resolve()
+              for root in (pathlib.Path("skills"), pathlib.Path(".agents/skills"))
+              if root.is_dir()
+              for candidate in root.iterdir()
+              if candidate.is_dir()
+          }
+          orphaned_skill_roots = sorted(
+              candidate_skill_roots - discovered_skill_roots
+          )
+          if orphaned_skill_roots:
+              for skill_root in orphaned_skill_roots:
+                  print(f"::error file={skill_root}::SKILL.md is required")
+              raise SystemExit(1)
 
           for skill_file in skill_files:
               try:
