@@ -148,6 +148,11 @@ jobs:
                       )
                       if tool.get("type") != "mcp":
                           raise ValueError(f"{location}.type must be mcp")
+                      identifier = tool.get("value")
+                      if not isinstance(identifier, str) or not identifier.strip():
+                          raise ValueError(
+                              f"{location}.value must be a non-empty MCP identifier"
+                          )
                       for key, value in tool.items():
                           if not isinstance(value, str):
                               raise ValueError(f"{location}.{key} must be a string")
