@@ -119,11 +119,12 @@ change in the current repository's `llm-wiki/patterns/` profile.
    latest PR head. Automatic review is preferred; request `@codex review`
    through the connector when bootstrapping or re-reviewing. Resolve findings
    with connector-authored commits. If the user authorized merge or auto-merge,
-   follow the repository root `AGENTS.md` auto-merge policy and enable
-   auto-merge through the connector; never merge directly or use an admin
-   bypass. Distinguish an armed PR from a merged PR, and verify remote `main`
-   contains the change before installing it. Do not install from a local branch
-   or an unmerged PR.
+   follow the repository root `AGENTS.md` policy. Enable auto-merge through the
+   connector only for an eligible skill or README change. Policy or validator
+   workflow changes require the root policy's explicitly authorized direct
+   connector merge path. Never use an admin bypass. Distinguish an armed PR
+   from a merged PR, and verify remote `main` contains the change before
+   installing it. Do not install from a local branch or an unmerged PR.
 6. Refresh the published global skill and managed root guidance from the source
    checkout. This wrapper uses the Skills CLI to install or update the published
    skill. Pass every affected repository path in the same invocation:
