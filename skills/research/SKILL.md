@@ -42,11 +42,13 @@ durable research document.
 Determine `PLAN_ROOT` before writing:
 
 1. Read root `AGENTS.md` and inspect the existing planning directories.
-2. Use the repository's established root, such as `.plans/`, `wiki/plans/`,
-   or `wiki/dev/`.
-3. Do not create a second planning tree alongside an established one.
-4. If guidance and layout identify different roots, or no root exists, ask the
-   user which root to use.
+2. If repository guidance names a root, use it even when its directory does
+   not exist yet.
+3. Otherwise use the one established root visible in the layout, such as
+   `.plans/`, `wiki/plans/`, or `wiki/dev/`.
+4. Do not create a second planning tree alongside an established one.
+5. Ask the user only when guidance names no root and the layout is absent or
+   ambiguous.
 
 Determine the document's three-digit `XXX` prefix before writing:
 
