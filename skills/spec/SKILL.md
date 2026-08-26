@@ -25,16 +25,16 @@ Interview relentlessly until you and the user share an understanding.
 
 Read these **before** inventing topology, trust boundaries, or domain names. Prefer wiki and patterns over stale WIP code.
 
-| Priority | Path                                                                                            | Use for                                                                   |
-| -------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| 1        | [`wiki/architecture/`](../../../wiki/architecture/)                                             | Intended subsystem topology, `*Api` gateways, finalize/ledger/block flows |
-| 2        | [`wiki/glossary.md`](../../../wiki/glossary.md)                                                 | Canonical domain terms                                                    |
-| 3        | [`wiki/index.md`](../../../wiki/index.md)                                                       | Catalog of wiki pages                                                     |
-| 4        | [`AGENTS.md` Docs lookup](../../../AGENTS.md)                                                   | Keyword → pattern / architecture routing                                  |
-| 5        | `$patterns` (`references/patterns/`)                                      | Generic code-shape patterns                                               |
-| 6        | [`llm-wiki/patterns/`](../../../llm-wiki/patterns/index.md) | Zerospin-specific patterns and case studies                               |
-| 7        | [`llm-wiki.md`](../../../llm-wiki.md)                                                           | How this repo's LLM wiki idea works (meta)                                |
-| 8        | [`TODOS.md`](../../../TODOS.md)                                                                 | Target-vs-current naming / topology audit                                 |
+| Priority | Active-project path               | Use for                                                                   |
+| -------- | --------------------------------- | ------------------------------------------------------------------------- |
+| 1        | `wiki/architecture/`              | Intended subsystem topology, `*Api` gateways, finalize/ledger/block flows |
+| 2        | `wiki/glossary.md`                | Canonical domain terms                                                    |
+| 3        | `wiki/index.md`                   | Catalog of wiki pages                                                     |
+| 4        | `AGENTS.md` Docs lookup           | Keyword → pattern / architecture routing                                  |
+| 5        | `$patterns` (`references/patterns/`) | Generic code-shape patterns                                               |
+| 6        | `llm-wiki/patterns/`              | Zerospin-specific patterns and case studies                               |
+| 7        | `llm-wiki.md`                     | How this repo's LLM wiki idea works (meta)                                |
+| 8        | `TODOS.md`                        | Target-vs-current naming / topology audit                                 |
 
 Also read the relevant source under `packages/` / `apps/` when the wiki is thin or the question is about current behavior.
 
