@@ -3,9 +3,10 @@ name: research
 description: >-
   Read substantial repository code and primary outside documentation in the
   current session, then emit one numbered research document under
-  .plans/research/. Use when the user says research, /research, investigate,
-  study the codebase, compare best practices, or asks for an architecture or
-  implementation research report before making a decision.
+  the active project's established planning tree. Use when the user says
+  research, /research, investigate, study the codebase, compare best practices,
+  or asks for an architecture or implementation research report before making
+  a decision.
 ---
 
 # Research
@@ -38,23 +39,34 @@ durable research document.
 
 ## Research document
 
+Determine `PLAN_ROOT` before writing:
+
+1. Read root `AGENTS.md` and inspect the existing planning directories.
+2. If repository guidance names a root, use it even when its directory does
+   not exist yet.
+3. Otherwise use the one established root visible in the layout, such as
+   `.plans/`, `wiki/plans/`, or `wiki/dev/`.
+4. Do not create a second planning tree alongside an established one.
+5. Ask the user only when guidance names no root and the layout is absent or
+   ambiguous.
+
 Determine the document's three-digit `XXX` prefix before writing:
 
-1. Inspect filenames recursively under `.plans/` for names beginning with three
-   digits.
-2. Use one more than the highest prefix found anywhere under `.plans/`.
+1. Inspect filenames recursively under `PLAN_ROOT` for names beginning with
+   three digits.
+2. Use one more than the highest prefix found anywhere under `PLAN_ROOT`.
 3. Ignore legacy filenames without a three-digit prefix when calculating the
    next number.
 
 Write exactly one document at:
 
 ```text
-.plans/research/XXX-research-<topic>.md
+PLAN_ROOT/research/XXX-research-<topic>.md
 ```
 
 Use the allocated zero-padded prefix and a kebab-case topic, matching the naming
-convention used by `.plans/specs/XXX-spec-<topic>.md` and
-`.plans/plans/XXX-plan-<topic>.md`.
+convention used by `PLAN_ROOT/specs/XXX-spec-<topic>.md` and
+`PLAN_ROOT/plans/XXX-plan-<topic>.md`.
 
 The document must include:
 
