@@ -55,10 +55,6 @@ Do **not** mix modes unless the user asks for both. For say-so, do **not** add i
 - Numbers in the overview and inline checkpoints must stay **in sync**.
 - Prefer a block comment above the function. Use JSDoc only if the function already uses JSDoc for public API docs.
 
-### Example
-
-Canonical reference: [`ControllerRepo.handleFanout`](../../../packages/system-worker/src/ControllerRepo/ControllerRepo.ts) — concise block-comment overview (steps 1–8) and richer `// N — …` checkpoints at phase boundaries.
-
 ### Verification
 
 - Every step in the overview appears at least once as an inline checkpoint.
