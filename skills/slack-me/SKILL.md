@@ -12,25 +12,29 @@ This is a write workflow, so also use the Slack plugin's outbound-message rules 
 
 ## Required env
 
-Immediate webhook sends need `SLACK_ME_WEBHOOK_URL` in the **repository root** `.env.local`:
+Immediate webhook sends require `SLACK_ME_WEBHOOK_URL` to already be present
+in the inherited process environment:
 
 ```bash
-# <repo-root>/.env.local
-SLACK_ME_WEBHOOK_URL=https://hooks.slack.com/services/...
+if [[ -z "${SLACK_ME_WEBHOOK_URL:-}" ]]; then
+  echo "SLACK_ME_WEBHOOK_URL is required" >&2
+  exit 1
+fi
 ```
 
-That file is gitignored (`**/.env*`). It must already exist locally with a real Slack incoming webhook URL — do not invent one, and never commit the URL into this skill or any other tracked file.
+Do not search for or source `.env`, `.env.local`, shell profile, or other
+configuration files. Do not invent a value, and never commit the URL into this
+skill or any other tracked file. If the variable is absent or empty, stop and
+report the missing environment variable; do not use the Slack connector as a
+fallback.
 
-Load the value before posting (example):
+Post using the inherited value:
 
 ```bash
-set -a && source .env.local && set +a
 curl -sS -X POST -H 'Content-Type: application/json' \
   --data "$(jq -n --arg text "$MESSAGE" '{text:$text}')" \
   "$SLACK_ME_WEBHOOK_URL"
 ```
-
-If `.env.local` is missing or `SLACK_ME_WEBHOOK_URL` is empty, stop and tell the user to add it at the repo root; do not fall back to a hardcoded webhook.
 
 ## Workflow
 
@@ -62,7 +66,9 @@ If `.env.local` is missing or `SLACK_ME_WEBHOOK_URL` is empty, stop and tell the
 
 ## Failure Handling
 
-- If `SLACK_ME_WEBHOOK_URL` is missing from root `.env.local`, say so and ask the user to add it; do not send.
+- If `SLACK_ME_WEBHOOK_URL` is absent or empty in the inherited environment,
+  fail immediately and report that it must be configured before Codex starts;
+  do not load a file or fall back to the Slack connector.
 - If Slack is disconnected or the current user cannot be resolved, say that Slack access is unavailable and ask the user to reconnect the Slack plugin.
 - If the webhook request fails, report the HTTP response and fall back to the Slack connector send path when available.
 - If a draft already exists, stop and tell the user Slack cannot overwrite the existing attached draft.
