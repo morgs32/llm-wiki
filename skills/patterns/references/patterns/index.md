@@ -135,6 +135,7 @@ See [README.md](./README.md) for format.
 | `runtime/rpc-client-module-public-env.ts`       | /\*\*                                         |
 | `runtime/rpc-server-module-secret-env.ts`       | /\*\*                                         |
 | `runtime/shiki-use-swr-immutable.ts`            | /\*\*                                         |
+| `runtime/yagni-before-coordination.md`           | Prove the root feature and end-to-end invariant justify coordination machinery |
 
 ## testing
 

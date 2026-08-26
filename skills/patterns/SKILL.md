@@ -1,10 +1,11 @@
 ---
 name: patterns
 description: >-
-  Apply Morgan's shared TypeScript, Effect, RPC, Next.js, Cloudflare, testing,
-  naming, and code-shape conventions. Use when implementing or reviewing code
-  in repositories whose guidance names $patterns, or when the user asks to
-  follow or inspect the shared patterns.
+  Apply Morgan's shared TypeScript, Effect, RPC, runtime architecture, testing,
+  naming, and code-shape conventions, including YAGNI and coordination-cost
+  checks. Use when implementing or reviewing code in repositories whose
+  guidance names $patterns, or when the user asks to follow or inspect the
+  shared patterns.
 ---
 
 # Patterns
@@ -19,6 +20,10 @@ skill when they are more specific.
    names before choosing a shared pattern.
 2. Search [the pattern index](references/patterns/index.md) for task keywords.
    Read only the matching pattern files and any directly linked reference.
+   When either the task or the change being implemented or reviewed proposes a
+   new capability, guarantee, abstraction, compatibility path, or cross-owner
+   coordination mechanism, read the indexed YAGNI and coordination-cost
+   pattern before implementation or review.
 3. Apply the demonstrated invariant to the current code. The code in each
    pattern shows the preferred shape; `@bad` tags identify rejected shapes.
 4. Keep the change scoped. Do not mechanically rewrite unrelated code merely
