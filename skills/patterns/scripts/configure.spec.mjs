@@ -53,6 +53,8 @@ test("inserts before an Nx block at the end and preserves repository guidance", 
       configured.indexOf("patterns configuration start") <
         configured.indexOf("nx configuration start"),
     );
+    assert.ok(configured.includes("runtime architecture"));
+    assert.ok(configured.includes("cross-owner"));
     assert.equal(readFileSync(agentsPath, "utf8"), configured);
   });
 });
