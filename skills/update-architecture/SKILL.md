@@ -89,7 +89,3 @@ The post-commit LLM Wiki ingest hook may also update these pages. When editing m
 - [ ] Every ``[`…`](…)`` link uses a relative path from the doc file.
 - [ ] No behavior invented — each step traceable to a line in source.
 - [ ] Frontmatter `sources` SHAs refreshed when cited files changed.
-
-## Example
-
-Canonical reference after a pass: [`wiki/architecture/DeploySystem.md`](../../../wiki/architecture/DeploySystem.md).
