@@ -31,7 +31,7 @@ fallback.
 Post using the inherited value:
 
 ```bash
-curl -sS -X POST -H 'Content-Type: application/json' \
+curl -sS --fail-with-body -X POST -H 'Content-Type: application/json' \
   --data "$(jq -n --arg text "$MESSAGE" '{text:$text}')" \
   "$SLACK_ME_WEBHOOK_URL"
 ```
