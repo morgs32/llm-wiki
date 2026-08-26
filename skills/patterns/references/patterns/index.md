@@ -66,6 +66,7 @@ See [README.md](./README.md) for format.
 | File                                         | Description                                                     |
 | -------------------------------------------- | --------------------------------------------------------------- |
 | `naming/avoid-abbreviations.ts`              | /\*\*                                                           |
+| `naming/derive-from-canonical-descriptor.ts` | One descriptor owns related shapes; derive the rest             |
 | `naming/dynamic-module-reads.ts`             | /\*\*                                                           |
 | `naming/generic-type-parameters-all-caps.ts` | Generic type parameters use `ALL_CAPS`                          |
 | `naming/infer-utility-types.ts`              | Extractor utilities use `Infer*`, not `I*`                      |

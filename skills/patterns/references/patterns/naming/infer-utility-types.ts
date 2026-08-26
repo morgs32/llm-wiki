@@ -1,5 +1,7 @@
 /**
  * Domain types use `I`. Conditional extractors use `Infer` — not `I`.
+ * Prefer deriving related resource shapes from one canonical descriptor
+ * (`derive-from-canonical-descriptor.ts`) instead of parallel `I*` aliases.
  *
  * @bad `export type ICommandFrom<VALUE>` — extractor with `I` prefix.
  * @bad `export type CommandFrom<VALUE>` — extractor without `Infer`.
