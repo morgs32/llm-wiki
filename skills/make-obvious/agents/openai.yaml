@@ -1,4 +1,4 @@
 interface:
   display_name: "Make Obvious"
-  short_description: "Understand and simplify one code slice"
-  default_prompt: "Use $make-obvious to understand and simplify one coherent slice of this code."
+  short_description: "Explain, review, or simplify one code slice"
+  default_prompt: "Use $make-obvious to explain, review, or simplify this code one coherent slice at a time."
