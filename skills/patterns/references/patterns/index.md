@@ -59,6 +59,7 @@ See [README.md](./README.md) for format.
 | `functions/mapvalues-not-from-entries.ts`          | /\*\*       |
 | `functions/no-export-single-use-bindings.ts`       | Do not export a binding used only in the same module — inline it |
 | `functions/no-one-off-export-aliases.ts`           | /\*\*       |
+| `functions/readable-workflow-boundaries.md`        | Keep one workflow linear; split a broad boundary when kinds have different contracts |
 | `functions/separate-helpers-not-overloads.ts`      | /\*\*       |
 
 ## naming
@@ -122,6 +123,7 @@ See [README.md](./README.md) for format.
 | ----------------------------------------------- | --------------------------------------------- |
 | `runtime/access-controls-check-reject-case.ts`  | /\*\*                                         |
 | `runtime/api-call-worker-rpcs-not-internals.ts` | /\*\*                                         |
+| `runtime/concurrency-slice-lens.md`              | Explain ownership, schedules, and concurrency invariants before simplifying |
 | `runtime/dont-remap-not-found-error.ts`         | /\*\*                                         |
 | `runtime/effect-fn-map-thrown-causes.ts`        | Map thrown causes and preserve typed failures |
 | `runtime/get-by-key-or-throw.ts`                | /\*\*                                         |
