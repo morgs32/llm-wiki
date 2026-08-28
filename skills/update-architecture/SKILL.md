@@ -34,7 +34,7 @@ The post-commit LLM Wiki ingest hook may also update these pages. When editing m
 4. **Update Annotated workflow steps**  
    Numbered list for the workflow or lifecycle implementation itself (`Effect.fn`, runtime boundary, repo calls, returned receipts, and branch conditions). Separate it from Trigger so invocation and implementation remain distinct. One numbered item per sequence-diagram message, same number, order, and meaning.
    Nested unordered bullets hold the source citations. Do **not** trail a parenthetical comma-separated link list on the numbered item.
-   Each bullet is one working Markdown source link, then an em dash, then the **relevant fact at that exact range** — the call, check, or return that range uniquely performs. Do not restate the parent numbered prose. Do not summarize the whole file. Dual paths (aggregate vs service, success vs failure) each get their own bullet because the relevant happening differs.
+   Each bullet is one working Markdown source link, then an em dash, then the **relevant fact at that exact range** — the call, check, or return that range uniquely performs — and its required `(path:start-end)` citation. Do not restate the parent numbered prose. Do not summarize the whole file. Dual paths (aggregate vs service, success vs failure) each get their own bullet because the relevant happening differs.
 
 5. **Use preview-safe relative links**  
    From `wiki/architecture/Foo.md`:
@@ -74,8 +74,8 @@ Numbered item = diagram-message meaning. Nested bullets = citations. After each 
 ## Annotated workflow steps
 
 1. Each getter snapshots the active generation before constructing the returned capability
-   - [`getAggregateFrontendApi.ts:78-88`](../../packages/system-worker/src/GatewayApi/getAggregateFrontendApi/getAggregateFrontendApi.ts#L78-L88) — `systemRepo.getActiveGenerationId()` through `makeAsync`/`decodeRpc`; a throw becomes `gateway-infrastructure-failure`.
-   - [`getServiceFrontendApi.ts:69-79`](../../packages/system-worker/src/GatewayApi/getServiceFrontendApi/getServiceFrontendApi.ts#L69-L79) — same active-generation snapshot on the service getter.
+   - [`getAggregateFrontendApi.ts:78-88`](../../packages/system-worker/src/GatewayApi/getAggregateFrontendApi/getAggregateFrontendApi.ts#L78-L88) — `systemRepo.getActiveGenerationId()` through `makeAsync`/`decodeRpc`; a throw becomes `gateway-infrastructure-failure`. (`packages/system-worker/src/GatewayApi/getAggregateFrontendApi/getAggregateFrontendApi.ts:78-88`)
+   - [`getServiceFrontendApi.ts:69-79`](../../packages/system-worker/src/GatewayApi/getServiceFrontendApi/getServiceFrontendApi.ts#L69-L79) — same active-generation snapshot on the service getter. (`packages/system-worker/src/GatewayApi/getServiceFrontendApi/getServiceFrontendApi.ts:69-79`)
 ```
 
 Do **not** attach citations as a trailing parenthetical list:
@@ -96,7 +96,7 @@ Do **not** attach citations as a trailing parenthetical list:
 - [ ] Sequence diagram matches the triggering path through the first public runtime or repo boundary.
 - [ ] Flowchart matches the implementation's named phases and branch conditions.
 - [ ] Trigger and Annotated sections are separate and numbered consistently.
-- [ ] Annotated-step citations are nested bullets; each link is followed by the relevant fact at that range.
+- [ ] Annotated-step citations are nested bullets; each link is followed by the relevant fact at that range and its `(path:start-end)` citation.
 - [ ] Every ``[`…`](…)`` link uses a relative path from the doc file.
 - [ ] No behavior invented — each step traceable to a line in source.
 - [ ] Frontmatter `sources` SHAs refreshed when cited files changed.
