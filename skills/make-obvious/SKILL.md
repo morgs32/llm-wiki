@@ -118,28 +118,37 @@ complexity is essential and stop.
 2. Preserve public behavior, errors, cancellation, cleanup, ordering, object
    identity, and failure causes unless the user explicitly changes the
    contract.
-3. Reduce before extracting: delete proven stale structure, inline one-use
-   indirection, colocate one-consumer details, import from the defining module,
-   and tighten names. Stop as soon as the code is obvious.
+3. Reduce before extracting: delete proven stale structure, inline trivial
+   expressions that do not deserve names, colocate one-consumer data, import
+   from the defining module, and tighten names. Do not retain a named helper in
+   its caller merely because it has one consumer: every retained helper
+   function belongs in its own same-named file.
 4. Extract only when the remaining complexity belongs to one complete
    invariant. Move that invariant behind one domain-named boundary and keep
    the caller as ordered orchestration; do not move arbitrary consecutive
    lines.
 5. When extraction is warranted, prefer a deep module with a small honest
-   interface. Its implementation may
-   be as long as the invariant requires; file or function length is diagnostic,
-   not a pass/fail rule.
+   interface. Put each retained helper function in its own same-named file and
+   export that function directly, including helpers with only one caller. A
+   source file exports at most one function. Do not evade this rule with a bag
+   of function-valued properties. Its implementation may be as long as the
+   invariant requires; file or function length is diagnostic, not a pass/fail
+   rule.
 6. When one file implements one workflow, prefer one exported function whose
    body presents that workflow in human reading order. In Effect code, export
    the actual `Effect.fn`; do not wrap a private `...Effect` implementation only
    to reshape its signature. Keep one-use checks and logical branches in that
-   body unless a helper hides an independently meaningful rule. A longer
-   cohesive function is preferable to making the reader reconstruct one
+   body when they do not deserve a helper name. When a helper is meaningful
+   enough to name, move it to its own same-named file even when it has only one
+   caller; do not leave named private helper functions in the parent module. A
+   longer cohesive function is preferable to making the reader reconstruct one
    workflow from several fragments. Use a short numbered phase overview and
    matching inline checkpoints when stable steps make that reading order
-   clearer. This is the skill's workflow-module preference, not a claim that
-   every kind of module universally requires one export; see the rationale in
-   the `$patterns` **Readable workflow boundaries** rationale.
+   clearer. This is the skill's production helper and workflow-module rule:
+   every retained helper function has its own file, and each source file
+   exports at most one function. Anonymous callbacks and class methods are not
+   separate helper functions. See the boundary rationale in the `$patterns`
+   **Readable workflow boundaries** pattern.
    Treat an immediate kind branch as evidence that the boundary may hide
    multiple workflows when the branches have materially different inputs,
    failure channels, callers, or lifetimes. Inspect those workflows separately
