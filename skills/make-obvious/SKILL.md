@@ -96,6 +96,14 @@ Do not infer a domain concept from an existing accessor name. A function named
 itself; its name does not prove that `metadata` is a separate concept worth
 preserving or exposing at a new boundary.
 
+Prefer named properties for ordinary data and genuine associations. Do not hide
+such a value behind a symbol and then add a reader merely to recover it. A
+symbol should buy identity, nominal typing, collision avoidance, or a required
+framework protocol; opacity alone is not a benefit. When a typed reader only
+returns `value.property`, inline the property access. Keep a reader only when it
+owns real decoding, validation, policy, dynamic lookup, or another behavior
+that callers should not reproduce.
+
 When the brief proposes a behavior model or new seam that the user has not
 accepted, stop and ask separately whether each is correct. Do not edit
 production code, tests, or durable documentation until the user accepts that
