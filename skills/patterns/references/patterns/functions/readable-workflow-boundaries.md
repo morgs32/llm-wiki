@@ -47,11 +47,17 @@ more navigation and coupling than one deep module with a small interface.
 Reject an extraction when it:
 
 - wraps one obvious call without adding a policy or meaningful name;
+- is a one-expression wrapper with one caller — inline it even when it would
+  become its own file;
 - moves arbitrary consecutive statements;
 - exposes a bag of incidental locals;
 - splits acquisition from cleanup or mutation from its required publication;
 - reduces line count while leaving the parent responsible for the same
   branching and decisions.
+
+Keep an extraction when one caller remains but the helper owns a **block**
+with its own invariant — for example validation loops, normalization passes,
+or lifecycle rules — not a single library call forwarded unchanged.
 
 ## Prefer one readable workflow
 
