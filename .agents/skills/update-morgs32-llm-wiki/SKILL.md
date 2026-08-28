@@ -69,8 +69,12 @@ branch, publication commit, and pull request. It does not authorize merge.
 
 1. Use `chatgpt-codex-connector` for every GitHub mutation. Do not use a
    personal-account Git push or `gh`.
-2. Create a non-`main` `codex/<topic>` branch from the exact verified remote
-   `main` SHA.
+2. Create a non-`main` `<type>/<kebab-topic>` branch from the exact verified
+   remote `main` SHA. Use a Conventional Commit type prefix (`feat`, `fix`,
+   `docs`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`) and
+   a short kebab-case slug. Prefer the prefix that matches the publication
+   commit's conventional type — for example `docs(patterns): …` on branch
+   `docs/inline-one-call-simple-helpers`. Do not use `codex/` prefixes.
 3. Stage the coherent patch in the isolated checkout and record its exact
    `git write-tree` SHA. Create the required blobs and tree from the verified
    base tree, then require the connector-created tree SHA to equal the recorded

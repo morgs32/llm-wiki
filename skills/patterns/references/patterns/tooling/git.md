@@ -45,3 +45,19 @@ fix(profiler): correct ProcedureCall type inference
 feat(client): add OPFSAdapter support
 docs: update cleanup docs
 ```
+
+### Branch names
+
+For topic branches and publication pull requests in `morgs32/llm-wiki`, use
+`<type>/<kebab-topic>` with the same Conventional Commit types as commit
+messages:
+
+```text
+docs/inline-one-call-simple-helpers
+refactor/make-obvious-one-file-per-helper
+feat/colocate-single-subject-specs
+```
+
+Prefer the branch prefix that matches the publication commit's conventional
+type. See `.agents/skills/update-morgs32-llm-wiki/SKILL.md` for the full
+publication workflow.
