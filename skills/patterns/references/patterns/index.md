@@ -142,6 +142,7 @@ See [README.md](./README.md) for format.
 
 | File                                              | Description |
 | ------------------------------------------------- | ----------- |
+| `testing/colocate-single-subject-specs.ts`        | Colocate focused specs by source basename; keep integrations separate |
 | `testing/inline-decode-rpc-no-decode-wire.ts`     | /\*\*       |
 | `testing/local-secrets-fail-at-load.ts`           | /\*\*       |
 | `testing/managed-runtime-it-layer.ts`             | /\*\*       |
