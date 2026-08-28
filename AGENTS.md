@@ -245,6 +245,7 @@ Refresh `sources[].sha` after edits (`git hash-object <path>`). `freshness.sh` u
 5. On diff vs page conflict: `> CONTRADICTION:` blockquote + fix + note in `log.md`.
 6. Do not duplicate pattern subtrees — link [`skills/patterns/references/patterns/`](./skills/patterns/references/patterns/index.md) and [`llm-wiki/patterns/`](./llm-wiki/patterns/index.md).
 7. Respect target-vs-current naming in [`TODOS.md`](./TODOS.md).
+8. After each `wiki/glossary.md` term's definition, list citations as unordered bullets. Each bullet is one working Markdown source citation followed by an em dash and one sentence naming the term-relevant fact at that range. Do not comma-separate citations. Do not restate the definition.
 
 **Ingest output:** Update affected pages; create pages for new public surface when doc type enabled; refresh glossary/index/overview when warranted; append `## [YYYY-MM-DD HH:MM] ingest | <sha> | <subject>` to `wiki/log.md`. Do not commit — hook does `wiki: update (<sha>)`.
 
