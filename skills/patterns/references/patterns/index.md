@@ -54,11 +54,13 @@ See [README.md](./README.md) for format.
 | `functions/effect-fn-one-props-object.ts`          | /\*\*       |
 | `functions/entrypoint-export-only.ts`              | /\*\*       |
 | `functions/inline-effect-before-yield.ts`          | /\*\*       |
+| `functions/inline-one-call-simple-helpers.ts`      | Do not extract a one-caller wrapper around one simple call — inline it; extract only a block with its own invariant |
 | `functions/inline-one-off-props-types.ts`          | /\*\*       |
 | `functions/make-normalize-optional-collections.ts` | /\*\*       |
 | `functions/mapvalues-not-from-entries.ts`          | /\*\*       |
 | `functions/no-export-single-use-bindings.ts`       | Do not export a binding used only in the same module — inline it |
 | `functions/no-one-off-export-aliases.ts`           | /\*\*       |
+| `functions/readable-workflow-boundaries.md`        | Keep one workflow linear; split a broad boundary when kinds have different contracts |
 | `functions/separate-helpers-not-overloads.ts`      | /\*\*       |
 
 ## naming
@@ -122,6 +124,7 @@ See [README.md](./README.md) for format.
 | ----------------------------------------------- | --------------------------------------------- |
 | `runtime/access-controls-check-reject-case.ts`  | /\*\*                                         |
 | `runtime/api-call-worker-rpcs-not-internals.ts` | /\*\*                                         |
+| `runtime/concurrency-slice-lens.md`              | Explain ownership, schedules, and concurrency invariants before simplifying |
 | `runtime/dont-remap-not-found-error.ts`         | /\*\*                                         |
 | `runtime/effect-fn-map-thrown-causes.ts`        | Map thrown causes and preserve typed failures |
 | `runtime/get-by-key-or-throw.ts`                | /\*\*                                         |
@@ -133,6 +136,7 @@ See [README.md](./README.md) for format.
 | `runtime/rpc-client-module-public-env.ts`       | /\*\*                                         |
 | `runtime/rpc-server-module-secret-env.ts`       | /\*\*                                         |
 | `runtime/shiki-use-swr-immutable.ts`            | /\*\*                                         |
+| `runtime/yagni-before-coordination.md`           | Prove the root feature and end-to-end invariant justify coordination machinery |
 
 ## testing
 
@@ -158,7 +162,7 @@ See [README.md](./README.md) for format.
 | `tooling/duplicate-tsconfig-pass-on-emit.md`   | tooling     |
 | `tooling/effectful-work-inside-transaction.ts` | /\*\*       |
 | `tooling/sync-drizzle-no-effect-sync.ts`       | /\*\*       |
-| `tooling/git.md`                               | tooling     |
+| `tooling/git.md`                               | Conventional commit messages and `<type>/<kebab-topic>` branch names for publication PRs |
 | `tooling/manual-column-loop-vs-mapvalues.ts`   | /\*\*       |
 | `tooling/no-infer-row-type-alias.ts`           | /\*\*       |
 | `tooling/numbered-plan-lists.ts`               | /\*\*       |
