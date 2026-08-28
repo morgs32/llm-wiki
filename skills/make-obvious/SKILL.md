@@ -98,6 +98,14 @@ Do not infer a domain concept from an existing accessor name. A function named
 itself; its name does not prove that `metadata` is a separate concept worth
 preserving or exposing at a new boundary.
 
+Prefer named properties for ordinary data and genuine associations. Do not hide
+such a value behind a symbol and then add a reader merely to recover it. A
+symbol should buy identity, nominal typing, collision avoidance, or a required
+framework protocol; opacity alone is not a benefit. When a typed reader only
+returns `value.property`, inline the property access. Keep a reader only when it
+owns real decoding, validation, policy, dynamic lookup, or another behavior
+that callers should not reproduce.
+
 When the brief proposes a behavior model or new seam that the user has not
 accepted, stop and ask separately whether each is correct. Do not edit
 production code, tests, or durable documentation until the user accepts that
@@ -115,28 +123,37 @@ complexity is essential and stop.
 3. Reduce before extracting: delete proven stale structure; inline functions
    with one caller and one simple call; colocate one-consumer details; import
    from the defining module; and tighten names. Do not create a sibling file
-   for a one-call wrapper to satisfy one export per file. Extract only a block
-   that owns a complete invariant, even when it still has one caller. Stop as
-   soon as the code is obvious.
+   for a one-call wrapper to satisfy one export per file. When a helper is
+   meaningful enough to retain, put it in its own same-named file and export
+   that function directly; do not leave named private helper functions in the
+   parent module. Extract only a block that owns a complete invariant, even
+   when it still has one caller. Stop as soon as the code is obvious.
 4. Extract only when the remaining complexity belongs to one complete
    invariant. Move that invariant behind one domain-named boundary and keep
    the caller as ordered orchestration; do not move arbitrary consecutive
    lines.
 5. When extraction is warranted, prefer a deep module with a small honest
-   interface. Its implementation may
-   be as long as the invariant requires; file or function length is diagnostic,
-   not a pass/fail rule.
+   interface. Put each retained helper function in its own same-named file and
+   export that function directly, including helpers with only one caller. A
+   source file exports at most one function. Do not evade this rule with a bag
+   of function-valued properties. Its implementation may be as long as the
+   invariant requires; file or function length is diagnostic, not a pass/fail
+   rule.
 6. When one file implements one workflow, prefer one exported function whose
    body presents that workflow in human reading order. In Effect code, export
    the actual `Effect.fn`; do not wrap a private `...Effect` implementation only
    to reshape its signature. Keep one-use checks and logical branches in that
-   body unless a helper hides an independently meaningful rule. A longer
-   cohesive function is preferable to making the reader reconstruct one
+   body when they do not deserve a helper name. When a helper is meaningful
+   enough to name, move it to its own same-named file even when it has only one
+   caller; do not leave named private helper functions in the parent module. A
+   longer cohesive function is preferable to making the reader reconstruct one
    workflow from several fragments. Use a short numbered phase overview and
    matching inline checkpoints when stable steps make that reading order
-   clearer. This is the skill's workflow-module preference, not a claim that
-   every kind of module universally requires one export; see the rationale in
-   the `$patterns` **Readable workflow boundaries** rationale.
+   clearer. This is the skill's production helper and workflow-module rule:
+   every retained helper function has its own file, and each source file
+   exports at most one function. Anonymous callbacks and class methods are not
+   separate helper functions. See the boundary rationale in the `$patterns`
+   **Readable workflow boundaries** pattern.
    Treat an immediate kind branch as evidence that the boundary may hide
    multiple workflows when the branches have materially different inputs,
    failure channels, callers, or lifetimes. Inspect those workflows separately

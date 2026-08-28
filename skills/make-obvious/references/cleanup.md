@@ -45,9 +45,11 @@ Treat the user-named scope as an ordered queue of coherent slices.
    persistence, or cross-process boundaries.
 3. Order slices by smallest blast radius and finish verification for one before
    starting the next.
-4. Prefer removing structure to replacing it. Do not create helpers, types,
+4. Prefer removing structure to replacing it. Do not invent helpers, types,
    services, exports, files, or compatibility paths merely to make the pass
-   look organized.
+   look organized. When a helper is retained because it owns a meaningful
+   rule, put it in its own same-named file even if it has one caller; do not
+   leave named helper functions private in the parent module.
 5. Stop before a public API change, runtime-boundary move, ownership change, or
    abstraction the user has not approved.
 
