@@ -160,7 +160,7 @@ See [README.md](./README.md) for format.
 | `tooling/duplicate-tsconfig-pass-on-emit.md`   | tooling     |
 | `tooling/effectful-work-inside-transaction.ts` | /\*\*       |
 | `tooling/sync-drizzle-no-effect-sync.ts`       | /\*\*       |
-| `tooling/git.md`                               | tooling     |
+| `tooling/git.md`                               | Conventional commit messages and `<type>/<kebab-topic>` branch names for publication PRs |
 | `tooling/manual-column-loop-vs-mapvalues.ts`   | /\*\*       |
 | `tooling/no-infer-row-type-alias.ts`           | /\*\*       |
 | `tooling/numbered-plan-lists.ts`               | /\*\*       |
