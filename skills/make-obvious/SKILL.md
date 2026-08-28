@@ -3,9 +3,10 @@ name: make-obvious
 description: >-
   Make dense or needlessly indirect code understandable, then simplify one
   coherent slice at a time. Use for make-obvious; cleanup or slop review;
-  prune, simplify, inline, or import cleanup; and fix-casts or TypeScript
-  assertion audits. Do not use for generic tutorials or unbounded refactors
-  without a concrete scope.
+  prune, simplify, inline, or import cleanup; fix-casts or TypeScript assertion
+  audits; and one-call wrappers or one-liner helpers that should be inlined.
+  Do not use for generic tutorials or unbounded refactors without a concrete
+  scope.
 ---
 
 # Make Obvious
@@ -51,11 +52,12 @@ pause unless it changes behavior, public surface, ownership, or architecture.
    one concrete readability problem. Do not inventory every possible refactor
    before teaching or fixing the selected slice.
 4. Invoke `$patterns` and search its index for the exact task. For behavioral
-   orchestration, read **Readable workflow boundaries**. When the slice contains
-   concurrency, scopes, fibers, latches, streams, subscriptions, or
-   cancellation, also read **Concurrency slice lens**. For imports, casts, or a
-   named cleanup smell, read the matching pattern instead of loading unrelated
-   workflow guidance.
+   orchestration, read **Readable workflow boundaries**. For a one-caller
+   wrapper around one simple call, read **inline-one-call-simple-helpers**.
+   When the slice contains concurrency, scopes, fibers, latches, streams,
+   subscriptions, or cancellation, also read **Concurrency slice lens**. For
+   imports, casts, or a named cleanup smell, read the matching pattern instead
+   of loading unrelated workflow guidance.
 5. For library primitives, inspect the installed version first and use vendored
    or upstream source as explanatory reference. When versions differ, append
    one brief version note to the local glossary.
@@ -118,11 +120,14 @@ complexity is essential and stop.
 2. Preserve public behavior, errors, cancellation, cleanup, ordering, object
    identity, and failure causes unless the user explicitly changes the
    contract.
-3. Reduce before extracting: delete proven stale structure, inline trivial
-   expressions that do not deserve names, colocate one-consumer data, import
-   from the defining module, and tighten names. Do not retain a named helper in
-   its caller merely because it has one consumer: every retained helper
-   function belongs in its own same-named file.
+3. Reduce before extracting: delete proven stale structure; inline functions
+   with one caller and one simple call; colocate one-consumer details; import
+   from the defining module; and tighten names. Do not create a sibling file
+   for a one-call wrapper to satisfy one export per file. When a helper is
+   meaningful enough to retain, put it in its own same-named file and export
+   that function directly; do not leave named private helper functions in the
+   parent module. Extract only a block that owns a complete invariant, even
+   when it still has one caller. Stop as soon as the code is obvious.
 4. Extract only when the remaining complexity belongs to one complete
    invariant. Move that invariant behind one domain-named boundary and keep
    the caller as ordered orchestration; do not move arbitrary consecutive

@@ -54,6 +54,7 @@ See [README.md](./README.md) for format.
 | `functions/effect-fn-one-props-object.ts`          | /\*\*       |
 | `functions/entrypoint-export-only.ts`              | /\*\*       |
 | `functions/inline-effect-before-yield.ts`          | /\*\*       |
+| `functions/inline-one-call-simple-helpers.ts`      | Do not extract a one-caller wrapper around one simple call — inline it; extract only a block with its own invariant |
 | `functions/inline-one-off-props-types.ts`          | /\*\*       |
 | `functions/make-normalize-optional-collections.ts` | /\*\*       |
 | `functions/mapvalues-not-from-entries.ts`          | /\*\*       |

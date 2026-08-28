@@ -19,7 +19,9 @@ complexity is necessary or no worthwhile simplification remains.
 
 Before calling indirection wasteful, count callers and check whether it owns
 policy, a test seam, a runtime boundary, or an allowed package/worker barrel.
-Long code is not itself a finding.
+A one-caller wrapper around one obvious call is a finding — inline it. A
+one-caller block that owns a complete invariant is not. Long code is not
+itself a finding.
 
 ## Imports
 
