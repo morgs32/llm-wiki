@@ -218,7 +218,7 @@ wiki/
   decisions/, concepts/, sources/
 ```
 
-**Architecture pages (`wiki/architecture/`):** mermaid diagrams; **Trigger** (numbered `*Api` / entrypoint path); **Annotated methods** / **Annotated workflow steps** (SystemWorker → `*Repo`); **Callers**. Gateway docs (`AccountApi`, `FrontendApi`, …) live here, not `wiki/api/`. Links from `wiki/architecture/Foo.md`: `../../packages/...`, `../../examples/...`, sibling `./Other.md` — no root-absolute repository links.
+**Architecture pages (`wiki/architecture/`):** mermaid diagrams; **Trigger** (numbered `*Api` / entrypoint path); **Annotated methods** / **Annotated workflow steps** (SystemWorker → `*Repo`); **Callers**. Opening summary prose before the diagram or annotated steps should not repeat source links already carried by the numbered steps below. Citations in Trigger, Annotated, and other non-summary section prose are unordered bullets with a range-relevant fact after each working Markdown link, not parenthetical comma-separated lists. Gateway docs (`AccountApi`, `FrontendApi`, …) live here, not `wiki/api/`. Links from `wiki/architecture/Foo.md`: `../../packages/...`, `../../examples/...`, sibling `./Other.md` — no root-absolute repository links.
 
 **Page frontmatter** (required except `index.md`, `log.md`):
 
@@ -238,7 +238,7 @@ Refresh `sources[].sha` after edits (`git hash-object <path>`). `freshness.sh` u
 
 **Hard rules:**
 
-1. Cite or do not claim — `(path:start-end)` on every non-trivial statement, except `wiki/glossary.md` definitions whose citation bullets satisfy rule 8.
+1. Cite or do not claim — `(path:start-end)` on every non-trivial statement, except `wiki/glossary.md` definitions whose citation bullets satisfy rule 8 and `wiki/architecture/**` claims whose citation bullets satisfy rule 9.
 2. Never describe APIs or behavior not at HEAD.
 3. No runtime/UI behavior unless tests confirm it.
 4. No citations outside this repo.
@@ -246,6 +246,7 @@ Refresh `sources[].sha` after edits (`git hash-object <path>`). `freshness.sh` u
 6. Do not duplicate pattern subtrees — link [`skills/patterns/references/patterns/`](./skills/patterns/references/patterns/index.md) and [`llm-wiki/patterns/`](./llm-wiki/patterns/index.md).
 7. Respect target-vs-current naming in [`TODOS.md`](./TODOS.md).
 8. After each `wiki/glossary.md` term's definition, list citations as unordered bullets; these bullets satisfy the definition's citation requirement instead of an inline `(path:start-end)` citation. Each bullet is one working Markdown source citation followed by an em dash and one sentence naming the term-relevant fact at that range. Do not comma-separate citations. Do not restate the definition.
+9. On `wiki/architecture/**` pages, list every source citation as an unordered bullet; these bullets satisfy the claim's citation requirement instead of a trailing parenthetical link list. Each bullet is one working Markdown source citation followed by an em dash and one sentence naming the range-relevant fact at that range — the call, check, or return that range uniquely performs. Do not comma-separate citations. Do not restate the parent paragraph or numbered step. Nested bullets under Trigger and Annotated numbered items follow the same shape.
 
 **Ingest output:** Update affected pages; create pages for new public surface when doc type enabled; refresh glossary/index/overview when warranted; append `## [YYYY-MM-DD HH:MM] ingest | <sha> | <subject>` to `wiki/log.md`. Do not commit — hook does `wiki: update (<sha>)`.
 
