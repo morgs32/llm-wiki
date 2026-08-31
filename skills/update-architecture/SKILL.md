@@ -10,7 +10,7 @@ description: >-
 
 # update-architecture
 
-Keep `wiki/architecture/*.md` workflow docs aligned with the code they describe. Architecture is best demonstrated as interaction, so strongly prefer at least one Mermaid `sequenceDiagram` with matching `## Annotated workflow steps` in every architecture doc.
+Keep `wiki/architecture/*.md` workflow docs aligned with the code they describe. Architecture is best demonstrated as interaction, so strongly prefer at least one Mermaid `sequenceDiagram` with matching `## Annotated workflow steps` in every architecture doc in scope for the update.
 
 The post-commit LLM Wiki ingest hook may also update these pages. When editing manually or via an agent pass, preserve YAML frontmatter `sources[]` blocks (path, sha, lines) and refresh SHAs when cited files change.
 
@@ -25,7 +25,7 @@ The post-commit LLM Wiki ingest hook may also update these pages. When editing m
 1. **Read the source first**  
    Open the implementation files the doc links to (Api, entrypoint, workflow, repo). Trace the real call order — do not edit the doc from memory.
 
-2. **Default every architecture doc to a sequence diagram**
+2. **Default every architecture doc in scope to a sequence diagram**
    - Add or update a Mermaid `sequenceDiagram`, including when the doc does not already have one. Show the most meaningful causal path at the doc's abstraction level: who initiates the work, which runtime/capability/repo boundaries participate, what returns, and where real failures or branches occur.
    - Pair every sequence diagram with `## Annotated workflow steps` immediately after the diagram's closing fence. The annotated list must have one numbered item per diagram message, in the same number, order, and meaning.
    - If a specific doc genuinely does not seem to warrant a meaningful sequence diagram, do not omit it unilaterally. Stop and ask the user to confirm leaving that doc without one, explaining concretely why a sequence would be artificial or uninformative. The question is blocking; continue only after the user answers.
@@ -91,13 +91,13 @@ Do **not** attach citations as a trailing parenthetical list:
 
 ## Mermaid conventions
 
-- **Sequence**: use `sequenceDiagram` as the default architecture view for every doc. Name participants after runtime boundaries (`CLI`, `Dispatch Worker`, `SelfHostedZerospinApis`, `SystemWorker`). Show `makeAsync` / `decodeRpc` where the source uses them. Use `alt` for missing-input failures and real branch gates. Leave a doc without a sequence diagram only after the user confirms that specific exception.
+- **Sequence**: use `sequenceDiagram` as the default architecture view for every doc being updated. Name participants after runtime boundaries (`CLI`, `Dispatch Worker`, `SelfHostedZerospinApis`, `SystemWorker`). Show `makeAsync` / `decodeRpc` where the source uses them. Use `alt` for missing-input failures and real branch gates. Leave a doc without a sequence diagram only after the user confirms that specific exception.
 - **Sequence invocation labels**: label `->>` arrows with the call-site binding and method — `{receiverBinding}.{method}()` or `{receiverBinding}.{method}(...)` — not the Mermaid participant alias and not a prose summary. Always append `()` when the public method takes no arguments, or `(...)` when it takes arguments; do not omit parentheses and do not list argument names or values on the arrow. Strip `this.` / `props.` from `{receiverBinding}`. Family diagrams may keep wildcards such as `gatewayApi.get*FrontendApi(...)` or `systemApi.*(...)`. Good: `Gateway->>SystemRepo: systemRepo.getActiveGenerationId()`, `Caller->>Gateway: gatewayApi.get*FrontendApi(...)`. Bad: `gatewayApi.get*FrontendApi` (missing parens), `getActiveGenerationId()` (missing binding), `SystemRepo.getActiveGenerationId()` (participant alias), `acquire active generationId` (prose). Return arrows (`-->>`) keep result payloads; user/process steps and unnamed inline checks stay short predicates.
 - **Flowchart**: use one subgraph per public workflow or lifecycle. Node labels = method or phase names. Branch labels = `"yes"` / `"no"` on the condition that matches code.
 
 ## Checklist before finishing
 
-- [ ] Every architecture doc has a sequence diagram, or the user explicitly confirmed the specific exception.
+- [ ] Every architecture doc in scope has a sequence diagram, or the user explicitly confirmed the specific exception.
 - [ ] Each sequence diagram matches the meaningful causal path through the relevant runtime, capability, or repo boundaries.
 - [ ] Each sequence diagram is followed immediately by matching Annotated workflow steps, with one numbered item per message in the same order and meaning.
 - [ ] Any flowchart present matches the implementation's named phases and branch conditions.
