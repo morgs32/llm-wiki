@@ -9,7 +9,7 @@
  *
  * Preserve the repository's configured discovery lanes. Typical lanes are
  * `*.node.spec.ts`, `*.workerd.spec.ts`, `*.react.spec.tsx`,
- * `*.playwright.spec.ts[x]`, and `*.typecheck.ts`; the active config decides
+ * `*.playwright.spec.{ts,tsx}`, and `*.typecheck.ts`; the active config decides
  * which suffix is valid. Do not rename files without proving the matching
  * runner still discovers them and no old path remains referenced.
  *
