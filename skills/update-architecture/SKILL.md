@@ -91,7 +91,23 @@ Do **not** attach citations as a trailing parenthetical list:
 
 ## Mermaid conventions
 
-- **Sequence**: use `sequenceDiagram` as the default architecture view for every doc being updated. Name participants after runtime boundaries (`CLI`, `Dispatch Worker`, `SelfHostedZerospinApis`, `SystemWorker`). Show `makeAsync` / `decodeRpc` where the source uses them. Use `alt` for missing-input failures and real branch gates. Leave a doc without a sequence diagram only after the user confirms that specific exception.
+- **Sequence**: use `sequenceDiagram` as the default architecture view for every doc being updated. Name participants after source-owned execution scopes and runtime boundaries (`CLI`, `Dispatch Worker`, `SelfHostedZerospinApis`, `SystemWorker`). Show `makeAsync` / `decodeRpc` where the source uses them. Use `alt` for missing-input failures and real branch gates. Leave a doc without a sequence diagram only after the user confirms that specific exception.
+- **Sequence lifelines**: treat each participant as a lifeline for a
+  source-owned execution scope, runtime boundary, or returned receiver object.
+  If an exported function owns the variables or callbacks that make later
+  calls, use that function's source name as the participant and originate those
+  calls there. Show its return to the caller. When later calls target the
+  returned object, give that object its own participant; a typed binding such as
+  `participant backupWorker as backupWorker: IOpfsBackupWorker` makes that
+  identity explicit.
+- **Participant names and aliases**: prefer the source or runtime name directly,
+  such as `participant acquireOpfsBackupWorker`. Use `as` only when Mermaid
+  syntax requires a safe identifier or when a type annotation materially
+  clarifies the returned object, and keep the identifier and displayed name as
+  close as possible. Good: `participant ZerospinAppProvider as
+  ZerospinApp.Provider`. Bad: `participant Client as Page backup client` or
+  `participant Acquire as acquireOpfsBackupWorker scope`; narrative aliases
+  hide the source scope that owns the call.
 - **Sequence invocation labels**: label `->>` arrows with the call-site binding and method — `{receiverBinding}.{method}()` or `{receiverBinding}.{method}(...)` — not the Mermaid participant alias and not a prose summary. Always append `()` when the public method takes no arguments, or `(...)` when it takes arguments; do not omit parentheses and do not list argument names or values on the arrow. Strip `this.` / `props.` from `{receiverBinding}`. Family diagrams may keep wildcards such as `gatewayApi.get*FrontendApi(...)` or `systemApi.*(...)`. Good: `Gateway->>SystemRepo: systemRepo.getActiveGenerationId()`, `Caller->>Gateway: gatewayApi.get*FrontendApi(...)`. Bad: `gatewayApi.get*FrontendApi` (missing parens), `getActiveGenerationId()` (missing binding), `SystemRepo.getActiveGenerationId()` (participant alias), `acquire active generationId` (prose). Return arrows (`-->>`) keep result payloads; user/process steps and unnamed inline checks stay short predicates.
 - **Flowchart**: use one subgraph per public workflow or lifecycle. Node labels = method or phase names. Branch labels = `"yes"` / `"no"` on the condition that matches code.
 
@@ -99,6 +115,7 @@ Do **not** attach citations as a trailing parenthetical list:
 
 - [ ] Every architecture doc in scope has a sequence diagram, or the user explicitly confirmed the specific exception.
 - [ ] Each sequence diagram matches the meaningful causal path through the relevant runtime, capability, or repo boundaries.
+- [ ] Participant lifelines preserve source ownership, returned receiver objects are distinct when called later, and aliases stay close to source/runtime names.
 - [ ] Each sequence diagram is followed immediately by matching Annotated workflow steps, with one numbered item per message in the same order and meaning.
 - [ ] Any flowchart present matches the implementation's named phases and branch conditions.
 - [ ] Trigger and Annotated sections are separate and numbered consistently.
