@@ -16,7 +16,7 @@ Add **comments only** — no behavior changes, renames, or refactors. Pick the m
 
 | Mode                       | Trigger                                                         | Where                         | What                                           |
 | -------------------------- | --------------------------------------------------------------- | ----------------------------- | ---------------------------------------------- |
-| **Function walkthrough**   | `/annotate`, step annotations, numbered walkthrough of a method | Above a **function** + inline | Numbered phase list and `// N — …` checkpoints |
+| **Function walkthrough**   | `/annotate`, step annotations, numbered walkthrough of a method | Above a **function** + inline | Architecture blurb (exported) + numbered phases and `// N — …` checkpoints |
 | **File-top behavior note** | `/say-so`, file header explanation, document specific behavior  | Top of **file**               | Prose about **prompted** behavior only         |
 
 Do **not** mix modes unless the user asks for both. For say-so, do **not** add inline step markers or a function-level numbered overview.
@@ -31,18 +31,22 @@ Do **not** mix modes unless the user asks for both. For say-so, do **not** add i
 
 1. Read the **full** function, including nested callbacks, transactions, and early returns.
 2. Distill into **5–12** ordered steps. One short line each. Name the **phase**, not every statement.
-3. Place the numbered list **immediately above** the function in a block comment:
+3. For an **exported** method, write 1–3 sentences at the top of the overview block naming what it does in the larger architecture: owner, public/operator boundary, and durable effect. Do not restate the numbered steps. Skip this blurb for file-local helpers unless the user asks.
+4. Place the overview **immediately above** the function in a block comment — architecture prose first (when required), then the numbered list:
 
    ```typescript
    /*
+    * [What this exported method does in the larger architecture — owner,
+    *  caller boundary, and the durable effect. Not a restatement of the steps.]
+    *
     * 1. First phase.
     * 2. Second phase.
     * ...
     */
-   async myMethod() { ... }
+   export async function myMethod() { ... }
    ```
 
-4. Mark **checkpoints** inside the body with `// N — …` using the **same numbers** as the overview.
+5. Mark **checkpoints** inside the body with `// N — …` using the **same numbers** as the overview.
    - Inline text should be **more specific** than the overview line (RPC/table names, branches, what gets written).
    - Format: `// 3 — no rows in batch; skip transaction and cursor write`
    - Place markers at phase starts, early returns, and post-transaction cleanup.
@@ -50,13 +54,15 @@ Do **not** mix modes unless the user asks for both. For say-so, do **not** add i
 
 ### Function walkthrough style
 
-- Overview: one short imperative line per step.
+- Architectural overview (exported methods): 1–3 sentences before step 1 in the same block. Owner, boundary, durable effect — not a tour of callees or a paraphrase of the steps.
+- Overview steps: one short imperative line each.
 - Inline: same step number plus extra concrete detail — not a bare `// N`.
 - Numbers in the overview and inline checkpoints must stay **in sync**.
 - Prefer a block comment above the function. Use JSDoc only if the function already uses JSDoc for public API docs.
 
 ### Verification
 
+- Exported methods have the architecture blurb before step 1.
 - Every step in the overview appears at least once as an inline checkpoint.
 - No logic changes; comments only.
 
