@@ -51,6 +51,7 @@ See [README.md](./README.md) for format.
 | -------------------------------------------------- | ----------- |
 | `functions/avoid-wrapped-yield-casts.ts`           | /\*\*       |
 | `functions/destructure-props-immediately.ts`       | `props` arg then first-line `const { … } = props`; not parameter destructuring; not `props.x` through a nested `Effect.gen` |
+| `functions/default-props-over-conditional-spreads.ts` | Prefer defaulted destructuring + null/empty sentinels over `...(x === undefined ? {} : { x })` |
 | `functions/effect-fn-one-props-object.ts`          | /\*\*       |
 | `functions/entrypoint-export-only.ts`              | /\*\*       |
 | `functions/inline-effect-before-yield.ts`          | /\*\*       |
