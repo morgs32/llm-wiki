@@ -133,6 +133,7 @@ Treat the codebase as partially authored by whoever is iterating in the IDE.
 - Do **not** do extra or alternate work in the same pass: no "helpful" refactors, convenience wrappers, import rewires, or cleanups in files they did not name, unless they explicitly ask for that scope.
 - **Bad** — The user asked to add or export a default in one place (e.g. `defaultManagedRuntime` next to `makeSession`). The agent also removed the same kind of default from another module, added a new helper API, or changed call sites, without being asked.
 - **Good** — Make the exact change requested; leave everything else as-is. If something else is worth doing, say it in the reply; do not bundle it into the same diff unless the user asked for a broader pass.
+- When inspection establishes that code is unused outside the requested scope, report the exact symbol or file and the caller-search evidence, then ask whether to delete it. Do not silently delete unused code as incidental cleanup; delete it without an extra prompt when the user explicitly includes it in scope.
 
 DO NOT GIVE ME HIGH LEVEL SHIT. IF I ASK FOR FIX OR EXPLANATION, I WANT ACTUAL CODE OR EXPLANATION! I DON'T WANT "Here's how you can blablabla"
 
