@@ -1,8 +1,8 @@
 ---
 name: annotate
 description: >-
-  Adds comments that explain code: a numbered step overview above a function
-  with matching inline checkpoints, or a file-top block comment for specific
+  Adds comments that explain code: an overview above a function
+  with numbered steps and matching inline checkpoints for multi-step methods, or a file-top block comment for specific
   behavior the user names. Use when the user says annotate, /annotate, say-so,
   /say-so, step annotations, file header explanation, or wants a concise
   walkthrough or behavior note.
@@ -16,7 +16,7 @@ Add **comments only** — no behavior changes, renames, or refactors. Pick the m
 
 | Mode                       | Trigger                                                         | Where                         | What                                           |
 | -------------------------- | --------------------------------------------------------------- | ----------------------------- | ---------------------------------------------- |
-| **Function walkthrough**   | `/annotate`, step annotations, numbered walkthrough of a method | Above a **function** + inline | What the exported method does in the larger architecture, then numbered phases and `// N — …` checkpoints |
+| **Function walkthrough**   | `/annotate`, step annotations, numbered walkthrough of a method | Above a **function** + inline | What the exported method does in the larger architecture, then numbered phases and `// N — …` checkpoints for multi-step methods |
 | **File-top behavior note** | `/say-so`, file header explanation, document specific behavior  | Top of **file**               | Prose about **prompted** behavior only         |
 
 Do **not** mix modes unless the user asks for both. For say-so, do **not** add inline step markers or a function-level numbered overview.
@@ -30,9 +30,9 @@ Do **not** mix modes unless the user asks for both. For say-so, do **not** add i
 ## Function walkthrough
 
 1. Read the **full** function, including nested callbacks, transactions, and early returns.
-2. Distill into **5–12** ordered steps. One short line each. Name the **phase**, not every statement.
+2. Identify the meaningful phases, not every statement. If the method has only one step, provide only a concise overview above it: no numbered list and no inline checkpoint. For multi-step methods, use one short line per ordered step; do not invent phases to meet a step count.
 3. For an **exported** method, at the top of the overview block write 1–3 sentences on what the method **does** as part of the larger architecture: its role, who calls it, the effect it uniquely owns, and what neighboring paths do not do. Do not restate the numbered steps or tour callees. Skip this for file-local helpers unless the user asks.
-4. Place the overview **immediately above** the function in a block comment — architecture prose first (when required), then the numbered list:
+4. Place the overview **immediately above** the function in a block comment — architecture prose first (when required), then the numbered list for multi-step methods:
 
    ```typescript
    /*
@@ -48,7 +48,7 @@ Do **not** mix modes unless the user asks for both. For say-so, do **not** add i
    export async function myMethod() { ... }
    ```
 
-5. Mark **checkpoints** inside the body with `// N — …` using the **same numbers** as the overview.
+5. For multi-step methods, mark **checkpoints** inside the body with `// N — …` using the **same numbers** as the overview.
    - Inline text should be **more specific** than the overview line (RPC/table names, branches, what gets written).
    - Format: `// 3 — no rows in batch; skip transaction and cursor write`
    - Place markers at phase starts, early returns, and post-transaction cleanup.
@@ -56,7 +56,7 @@ Do **not** mix modes unless the user asks for both. For say-so, do **not** add i
 
 ### Function walkthrough style
 
-- Architectural overview (exported methods): 1–3 sentences before step 1 in the same block answering what this method does in the larger architecture. Role, caller, unique effect, and what it is not — not a tour of callees or a paraphrase of the steps.
+- Architectural overview (exported methods): 1–3 sentences in the same block, before step 1 when numbered steps apply answering what this method does in the larger architecture. Role, caller, unique effect, and what it is not — not a tour of callees or a paraphrase of the steps.
 - Overview steps: one short imperative line each.
 - Inline: same step number plus extra concrete detail — not a bare `// N`.
 - Numbers in the overview and inline checkpoints must stay **in sync**.
@@ -64,8 +64,9 @@ Do **not** mix modes unless the user asks for both. For say-so, do **not** add i
 
 ### Verification
 
-- Exported methods have an architecture overview before step 1 that says what the method does in the larger architecture.
-- Every step in the overview appears at least once as an inline checkpoint.
+- Exported methods have an architecture overview that says what the method does in the larger architecture.
+- One-step methods have only the overview, with no numbered list or inline checkpoint.
+- For multi-step methods, every step in the overview appears at least once as an inline checkpoint.
 - No logic changes; comments only.
 
 ## File-top behavior note (say-so)
