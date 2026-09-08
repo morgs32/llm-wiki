@@ -52,6 +52,7 @@ Do **not** mix modes unless the user asks for both. For say-so, do **not** add i
    - Inline text should be **more specific** than the overview line (RPC/table names, branches, what gets written).
    - Format: `// 3 — no rows in batch; skip transaction and cursor write`
    - Place markers at phase starts, early returns, and post-transaction cleanup.
+   - Leave an empty line immediately above every inline step marker, including the first marker in a function, callback, branch, or other nested scope. This also applies when the preceding line opens the scope.
    - Do **not** annotate every line.
 
 ### Function walkthrough style
@@ -67,7 +68,8 @@ Do **not** mix modes unless the user asks for both. For say-so, do **not** add i
 - Exported methods have an architecture overview that says what the method does in the larger architecture.
 - One-step methods have only the overview, with no numbered list or inline checkpoint.
 - For multi-step methods, every step in the overview appears at least once as an inline checkpoint.
-- No logic changes; comments only.
+- Every inline step marker has an empty line immediately above it, including at scope starts.
+- No logic changes; comments and checkpoint-spacing whitespace only.
 
 ## File-top behavior note (say-so)
 
