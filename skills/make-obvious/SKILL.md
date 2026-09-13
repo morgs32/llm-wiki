@@ -74,10 +74,11 @@ terminology, and include only:
 2. **Boundary** — inputs, outputs, owned state, failures, and lifetime.
 3. **Local glossary** — each unfamiliar primitive, its local name, and the one
    job it performs here.
-4. **Ownership view** — a small tree or table when resources have nested
-   lifetimes.
+4. **Ownership view** — a small tree, table, or diagram when resources have
+   nested lifetimes. Show which owner stays outside the proposed move.
 5. **Execution view** — one ordinary sequence, followed by one race timeline at
-   a time only when a race defines the behavior.
+   a time only when a race defines the behavior. Use a compact sequence or flow
+   diagram when it makes ordering or branching easier to read than prose.
 6. **Invariant table** — significant states or events and their observable
    results.
 7. **Complexity judgment** — what is essential to the contract versus
@@ -85,13 +86,20 @@ terminology, and include only:
 8. **Proposed move** — the smallest deletion, inline, colocation, rename, direct
    import, or domain boundary that would make the slice obvious, plus the
    existing tests that protect it; or an explicit **no refactor warranted**
-   conclusion.
+   conclusion. When proposing a boundary whose inputs, outputs, or call-site
+   effect are not already obvious, include a short signature and caller sketch
+   rather than naming the helper alone.
 9. **Vocabulary proof** — when the move introduces a noun, identify the
    distinct value, responsibility, or lifetime it names. If it is only another
    view or duplicate of an existing domain object, keep the existing noun.
 
 Use a proposed function name like an annotation: the parent should state what
 happens while the function owns how it happens.
+
+Readability is prized. A snippet or diagram must expose a decision, ownership
+boundary, or execution order more clearly than prose would. Prefer one small,
+exact artifact that replaces explanation; do not decorate the brief, dump a
+speculative implementation, or draw another end-to-end system tour.
 
 Do not infer a domain concept from an existing accessor name. A function named
 `readRouteMetadata(route)` may be historical indirection around the Route
