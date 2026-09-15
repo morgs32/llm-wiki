@@ -144,6 +144,7 @@ See [README.md](./README.md) for format.
 | File                                              | Description |
 | ------------------------------------------------- | ----------- |
 | `testing/colocate-single-subject-specs.ts`        | Colocate focused specs by source basename; keep integrations separate |
+| `testing/test-organization-and-annotations.ts`    | Organize focused and behavioral specs by promise, runtime lane, and necessary phase annotations |
 | `testing/inline-decode-rpc-no-decode-wire.ts`     | /\*\*       |
 | `testing/local-secrets-fail-at-load.ts`           | /\*\*       |
 | `testing/managed-runtime-it-layer.ts`             | /\*\*       |

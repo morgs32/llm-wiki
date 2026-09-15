@@ -4,7 +4,8 @@ description: >-
   Make dense or needlessly indirect code understandable, then simplify one
   coherent slice at a time. Use for make-obvious; cleanup or slop review;
   prune, simplify, inline, or import cleanup; fix-casts or TypeScript assertion
-  audits; and one-call wrappers or one-liner helpers that should be inlined.
+  audits; test review or restructuring; and one-call wrappers or one-liner
+  helpers that should be inlined.
   Do not use for generic tutorials or unbounded refactors without a concrete
   scope.
 ---
@@ -31,6 +32,11 @@ Match the lens to what the user authorized:
   [the cleanup lenses](references/cleanup.md).
 - **Casts** — audit or remove TypeScript assertions; read
   [the cast lens](references/casts.md) before touching a cast.
+- **Test / Judge** — audit test organization and report numbered, actionable
+  findings only. Do not move or rewrite tests in this mode.
+- **Test / Restructure** — preserve the old-test coverage map while organizing
+  one invariant-sized feature, verify it, and stop unless the user bounded a
+  larger pass.
 - **Pass** — process an explicitly bounded cleanup scope as successive slices;
   read [the cleanup lenses](references/cleanup.md).
 
@@ -56,8 +62,9 @@ pause unless it changes behavior, public surface, ownership, or architecture.
    wrapper around one simple call, read **inline-one-call-simple-helpers**.
    When the slice contains concurrency, scopes, fibers, latches, streams,
    subscriptions, or cancellation, also read **Concurrency slice lens**. For
-   imports, casts, or a named cleanup smell, read the matching pattern instead
-   of loading unrelated workflow guidance.
+   test review or restructuring, read **Test organization and annotations**.
+   For imports, casts, or a named cleanup smell, read the matching pattern
+   instead of loading unrelated workflow guidance.
 5. For library primitives, inspect the installed version first and use vendored
    or upstream source as explanatory reference. When versions differ, append
    one brief version note to the local glossary.
@@ -197,15 +204,24 @@ complexity is essential and stop.
 
 ## Make the tests teach the slice
 
-1. Build an old-test to invariant to new-test coverage map before moving tests.
-2. Group tests by observable behavior. Keep fixtures local to that behavior and
+1. In **Test / Judge**, return numbered actionable findings only. Identify the
+   owning source or behavior, the missing or duplicated promise, runtime-lane
+   mismatch, nondeterministic scheduling, stale annotation, or fixture problem,
+   and the smallest concrete correction. Do not include a generic summary.
+2. In **Test / Restructure**, build an old-test to invariant to new-test coverage
+   map before moving tests. Restructure one feature-sized slice, run its focused
+   verification, and stop unless the user authorized a bounded queue.
+3. Group tests by observable behavior. Keep fixtures local to that behavior and
    import them directly; do not create a universal machine or fake runtime.
-3. Keep concurrency deterministic with barriers such as `Deferred`. Do not use
+4. Preserve configured runtime suffixes and discovery lanes. A focused spec
+   mirrors its source basename; a behavioral spec names one observable promise.
+5. Keep concurrency deterministic with barriers such as `Deferred`. Do not use
    sleeps, polling, or timeouts as evidence of ordering.
-4. Put a short happens-before timeline above a test whose scheduling is not
-   obvious. Extract repeated scheduling only behind a domain-named scenario
-   driver, while keeping assertions in the test.
-5. Preserve cross-observer assertions when their shared identity or failure
+6. Add an ordered phase overview and matching inline checkpoints only when a
+   test has multiple phases or scheduling that is otherwise difficult to read.
+   Extract repeated scheduling only behind a domain-named scenario driver,
+   while keeping assertions in the test.
+7. Preserve cross-observer assertions when their shared identity or failure
    cause is the invariant.
 
 ## Leave focused knowledge
