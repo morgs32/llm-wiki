@@ -251,7 +251,55 @@ const runSkills = (args, { capture = false } = {}) => {
   return capture ? result.stdout : "";
 };
 
+const repoSkillsRoot = resolve(
+  dirname(fileURLToPath(import.meta.url)),
+  "../..",
+);
+
+const agentsSkillsRoot = join(homedir(), ".agents", "skills");
+
+const readLiveSymlinkPatternsInstall = () => {
+  if (!existsSync(agentsSkillsRoot)) {
+    return undefined;
+  }
+  if (!lstatSync(agentsSkillsRoot).isSymbolicLink()) {
+    return undefined;
+  }
+
+  let agentsReal;
+  let repoReal;
+  try {
+    agentsReal = realpathSync(agentsSkillsRoot);
+    repoReal = realpathSync(repoSkillsRoot);
+  } catch {
+    return undefined;
+  }
+  if (agentsReal !== repoReal) {
+    return undefined;
+  }
+
+  const path = join(agentsSkillsRoot, skillName);
+  if (!existsSync(join(path, "SKILL.md"))) {
+    return undefined;
+  }
+
+  return {
+    name: skillName,
+    path,
+    source: skillSource,
+    sourceType: "github",
+    liveSymlink: true,
+  };
+};
+
 const readInstalledSkill = (name) => {
+  if (name === skillName) {
+    const live = readLiveSymlinkPatternsInstall();
+    if (live) {
+      return live;
+    }
+  }
+
   const output = runSkills(["list", "-g", "--json"], { capture: true });
   const installedSkills = JSON.parse(output);
   return installedSkills.find((skill) => skill.name === name);
@@ -299,6 +347,10 @@ const verifyInstalledSkill = (installedSkill) => {
 };
 
 const verifySkillLock = (installedSkill) => {
+  if (installedSkill?.liveSymlink) {
+    return undefined;
+  }
+
   const entry = readInstalledSkillLock(installedSkill);
   if (!entry) {
     return "global skill lock entry is missing";
@@ -388,6 +440,23 @@ const requireSuccessfulUpdate = (output) => {
 };
 
 const configureGlobalSkill = async ({ check }) => {
+  const liveSymlinkInstall = readLiveSymlinkPatternsInstall();
+  if (liveSymlinkInstall) {
+    const problem = verifyInstalledSkill(liveSymlinkInstall);
+    if (problem && !check) {
+      throw new Error(problem);
+    }
+    if (!problem) {
+      validateInstalledSkill(liveSymlinkInstall);
+    }
+    return {
+      status: "current",
+      legacyInstalled: false,
+      problem,
+      liveSymlink: true,
+    };
+  }
+
   const installedBefore = readInstalledSkill(skillName);
   const legacyInstalledBefore = readInstalledSkill(legacySkillName);
   if (

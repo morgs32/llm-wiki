@@ -15,12 +15,15 @@ Never commit directly to `main`.
 ## Scope
 
 - Shared patterns live under `skills/patterns/references/patterns/**`.
-- Installable shared skills live under `skills/**`.
-- Workflows used only by this repository live under `.agents/skills/**`.
+- Installable shared skills live under `skills/**` (global via the
+  `~/.agents/skills` symlink into this checkout).
+- The only workflow used only by this repository lives under
+  `.agents/skills/update-morgs32-llm-wiki/`.
 - Root routing or publication policy lives in `AGENTS.md` and `README.md`.
 
-Do not edit installed `~/.agents/skills/**` copies, a consuming repository's
-`{root}/llm-wiki/**` tree, or any vendor subtree. Preserve unrelated local WIP.
+Edit installable skills in this checkout's `skills/**` (that is the live global
+install). Do not edit a consuming repository's `{root}/llm-wiki/**` tree or any
+vendor subtree. Preserve unrelated local WIP.
 
 ## Prepare the change
 

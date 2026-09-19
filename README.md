@@ -6,31 +6,28 @@ Shared code-shape guidance is packaged as
 [`patterns`](./skills/patterns/SKILL.md), with its
 self-contained references under
 [`references/patterns`](./skills/patterns/references/patterns/index.md).
-Install skills globally and keep only project-specific profiles, overrides, and
-domain guidance in consuming repositories; do not vendor this repository for
-the shared patterns.
+Keep only project-specific profiles, overrides, and domain guidance in
+consuming repositories; do not vendor this repository for the shared
+patterns.
 
 ## Install
 
-From a clean checkout of current `main`, install or update the shared skill and
-configure one or more consuming repositories:
+`~/.agents/skills` is a live symlink to this repository's [`skills/`](./skills/)
+directory. Edit skills here; that checkout **is** the global install. Do not
+treat `~/.agents/skills/**` as a separate generated copy.
+
+Configure one or more consuming repositories' managed `AGENTS.md` blocks:
 
 ```bash
 node skills/patterns/scripts/configure.mjs /path/to/repository
 ```
 
-The command uses the Skills CLI to install from published `morgs32/llm-wiki`
-and owns only the marker-bounded `Shared patterns` block in each
-root `AGENTS.md`. It preserves all surrounding guidance, normalizes a lowercase
-root `agents.md`, and never edits nested or vendored agent files. Pass multiple
-repository paths to update them together, or use `--check` for a read-only
-drift check. It validates the new `$patterns` installation, migrates every
-requested managed block, and only then removes the legacy
-`$engineering-patterns` installation.
-
-The installed `~/.agents/skills/patterns` directory and managed
-`AGENTS.md` block are generated output. Make skill changes in this repository,
-never in the installed copy or between the managed markers.
+When `~/.agents/skills` already symlinks into this checkout, the command skips
+Skills CLI global install/update and only owns the marker-bounded
+`Shared patterns` block in each root `AGENTS.md`. It preserves surrounding
+guidance, normalizes a lowercase root `agents.md`, and never edits nested or
+vendored agent files. Pass multiple repository paths to update them together,
+or use `--check` for a read-only drift check.
 
 ## Publish and update shared guidance
 
@@ -45,7 +42,7 @@ workflow to publish pattern or skill source changes:
    pull request against `morgs32/llm-wiki:main`.
 4. When separately authorized, merge the PR and verify the change is present on
    remote `main`.
-5. Only then refresh the installed skill and managed repository guidance:
+5. Only then refresh managed repository guidance:
 
    ```bash
    node skills/patterns/scripts/configure.mjs /path/to/repository
