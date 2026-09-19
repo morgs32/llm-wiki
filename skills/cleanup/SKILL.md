@@ -69,6 +69,12 @@ Exceptions:
 - a `utils/` folder
 - a barrel (`index.ts` / worker entrypoint) that only re-exports. Implementation does not live in the barrel.
 
+Typecheck and unit-spec files follow the **sibling subject**, not their own export (they usually have none):
+
+- A collocated `*.typecheck.*` or unit `*.spec.*` is named after the sibling source file, or lives in the subject folder as `subject/subject.ts` + `subject/subject.typecheck.ts`.
+- A typecheck that imports several factories with no same-named sibling (e.g. `makeAppFrontends.typecheck.tsx` covering `makeSession` / `makeRuntime` / …) is a misnamed-file candidate: split the assertions into each subject's typecheck.
+- Leave intentional workflow/e2e suites that live under `tests/` alone. Facet suffixes (`*ImportFailure`, `GatewayApi.access`) are candidates to merge into the primary subject's existing test file unless the user keeps them as a deliberate exception.
+
 Surface misnamed files and multi-export files as report candidates (rename, split, or move the extra export into its own same-named file). Do not rewrite them during Explore.
 
 ### 2. Present candidates as an HTML report

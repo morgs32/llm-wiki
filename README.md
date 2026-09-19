@@ -35,19 +35,15 @@ Use the repo-local
 [`update-morgs32-llm-wiki`](./.agents/skills/update-morgs32-llm-wiki/SKILL.md)
 workflow to publish pattern or skill source changes:
 
-1. Start from current `origin/main` on a clean branch or isolated worktree.
+1. Work on `main` in this checkout. `git pull` if remote `main` has moved.
 2. Change `skills/patterns/`, update its pattern index when needed,
    and validate the skill.
-3. Publish the coherent change through a connector-authored topic branch and
-   pull request against `morgs32/llm-wiki:main`.
-4. When separately authorized, merge the PR and verify the change is present on
-   remote `main`.
-5. Only then refresh managed repository guidance:
+3. Commit on `main` and push when asked. A pull request is optional.
+4. After the change is on remote `main`, refresh managed repository guidance:
 
    ```bash
    node skills/patterns/scripts/configure.mjs /path/to/repository
    ```
 
-Do not install from a local branch or unmerged PR. The repo-local updater owns
-the full publication and merge-authorization boundary; `update-llm-wiki`
+Do not refresh consuming-repo guidance from an unmerged PR. `update-llm-wiki`
 updates only a consuming repository's `{root}/llm-wiki/**` guidance.

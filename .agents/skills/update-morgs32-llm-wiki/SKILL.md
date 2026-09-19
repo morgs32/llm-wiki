@@ -1,16 +1,17 @@
 ---
 name: update-morgs32-llm-wiki
 description: >-
-  Update shared patterns or skill source in morgs32/llm-wiki and publish the
-  coherent change through a GitHub pull request. Use from this repository when
-  the user asks to change or publish its patterns or skills. Do not use for a
-  consuming repository's local {root}/llm-wiki/** guidance.
+  Update shared patterns or skill source in morgs32/llm-wiki on main. Use from
+  this repository when the user asks to change or publish its patterns or
+  skills. Do not use for a consuming repository's local {root}/llm-wiki/**
+  guidance.
 ---
 
 # Update morgs32/llm-wiki
 
-Update the canonical `morgs32/llm-wiki` source and deliver a ready pull request.
-Never commit directly to `main`.
+Update the canonical `morgs32/llm-wiki` source in this checkout. Work on
+`main` is allowed: edit, commit, and push here when asked. A pull request is
+optional, not required to land the change.
 
 ## Scope
 
@@ -27,13 +28,11 @@ vendor subtree. Preserve unrelated local WIP.
 
 ## Prepare the change
 
-1. Read the current remote `main` SHA through the GitHub connector. If the
-   normal checkout contains unrelated changes or unresolved state, prepare the
-   requested patch in a clean isolated checkout of that exact SHA. Never stash,
-   reset, discard, resolve, or commit unrelated work.
-2. From that verified checkout, read root `AGENTS.md`, the affected skill
-   entrypoint, and every directly linked instruction needed for the requested
-   change. Dirty or unpublished guidance does not define the patch.
+1. Work on `main` in this checkout. `git pull` first if remote `main` has
+   moved. Never stash, reset, discard, or commit unrelated work; leave it in
+   place and make the requested change beside it.
+2. Read root `AGENTS.md`, the affected skill entrypoint, and every directly
+   linked instruction needed for the requested change.
 3. For a shared pattern change, read
    `skills/patterns/references/patterns/README.md` and search
    `skills/patterns/references/patterns/index.md` before editing. Ground the
@@ -42,13 +41,13 @@ vendor subtree. Preserve unrelated local WIP.
 4. For a skill change, load `$skill-creator`, preserve supported metadata, and
    update direct routing references when a name, path, or responsibility moves.
 5. For a skill rename, require explicit old and new names; do not infer either
-   from dirty WIP. Search every tracked file at the verified base SHA, and retain
-   the old name only in reviewed migration code, tests, or documentation.
-   Inspect installers, lock metadata, managed markers, and generated-install
-   behavior. Install and validate the new skill, migrate and validate every
-   requested repository marker, and only then remove a same-source legacy
-   installation. Preserve the legacy installation if any marker migration
-   fails, and refuse to remove an installation owned by another source.
+   from dirty WIP. Search every tracked file, and retain the old name only in
+   reviewed migration code, tests, or documentation. Inspect installers, lock
+   metadata, managed markers, and generated-install behavior. Install and
+   validate the new skill, migrate and validate every requested repository
+   marker, and only then remove a same-source legacy installation. Preserve the
+   legacy installation if any marker migration fails, and refuse to remove an
+   installation owned by another source.
 6. Make only the coherent requested pattern and skill changes. Keep pattern
    sources, skill entrypoints, metadata, scripts, tests, indexes, and direct
    documentation references consistent when the requested change affects them.
@@ -62,36 +61,32 @@ vendor subtree. Preserve unrelated local WIP.
    stale callers beyond deliberate migration code, tests, or documentation.
 4. Run targeted tests for every changed script. If no Nx target exists, invoke
    the script's native test runner directly.
-5. Re-read remote `main`. If it moved during preparation, rebuild the patch on
-   the new head and repeat validation.
+5. `git pull` again if remote `main` moved during preparation, then repeat
+   validation.
 
-## Publish through a pull request
+## Publish
 
-Treat “via PR”, “open a PR”, or “publish” as authorization to create the topic
-branch, publication commit, and pull request. It does not authorize merge.
+Work on `main` is allowed. Commit in this checkout. Push to `origin/main` when
+the user asks to push, publish, or land the change.
 
-1. Use `chatgpt-codex-connector` for every GitHub mutation. Do not use a
-   personal-account Git push or `gh`.
-2. Create a non-`main` `<type>/<kebab-topic>` branch from the exact verified
-   remote `main` SHA. Use a Conventional Commit type prefix (`feat`, `fix`,
-   `docs`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`) and
-   a short kebab-case slug. Prefer the prefix that matches the publication
-   commit's conventional type — for example `docs(patterns): …` on branch
+Treat “via PR”, “open a PR”, or “publish as a PR” as authorization to open a
+pull request. It does not authorize merge. A PR is optional.
+
+1. For a PR, create a non-`main` `<type>/<kebab-topic>` branch. Use a
+   Conventional Commit type prefix (`feat`, `fix`, `docs`, `refactor`, `perf`,
+   `test`, `build`, `ci`, `chore`, `revert`) and a short kebab-case slug.
+   Prefer the prefix that matches the publication commit's conventional type —
+   for example `docs(patterns): …` on branch
    `docs/inline-one-call-simple-helpers`. Do not use `codex/` prefixes.
-3. Stage the coherent patch in the isolated checkout and record its exact
-   `git write-tree` SHA. Create the required blobs and tree from the verified
-   base tree, then require the connector-created tree SHA to equal the recorded
-   local tree SHA before creating one coherent conventional commit and
-   fast-forwarding the topic ref without force.
-4. Open a ready pull request against `morgs32/llm-wiki:main`. Include the
+2. Open a ready pull request against `morgs32/llm-wiki:main`. Include the
    behavioral split, migration details, and local validation in the body.
-5. Verify the pull request head SHA and exact changed-file list. Wait for the
+3. Verify the pull request head SHA and exact changed-file list. Wait for the
    `validate-skills` check and Codex review on that head; address in-scope
-   findings with connector-authored commits and revalidate the latest head.
-6. Stop with the pull request open unless the user separately authorizes merge
+   findings and revalidate the latest head.
+4. Stop with the pull request open unless the user separately authorizes merge
    or auto-merge. Follow root `AGENTS.md` for merge eligibility and gates; never
    bypass branch protection.
 
-Report the pull request URL, branch and head SHA, exact source areas changed,
-and validation results. Do not refresh installed skills or downstream guidance
-from an unmerged pull request.
+Report what landed: commit SHA on `main`, or the pull request URL plus head
+SHA, plus the exact source areas changed and validation results. Do not
+refresh downstream consuming-repo guidance from an unmerged pull request.
