@@ -38,8 +38,6 @@ CI=true pnpm nx run-many -t test:workerd --all
 
 When a failure is isolated to one project, rerun the narrowest Nx target instead of the whole workspace, for example `pnpm nx run @zerospin/core:ts`.
 
-If an Nx task or target shape is unclear, use the `nx-workspace` skill to inspect resolved project configuration. If the issue is task execution, use the `nx-run-tasks` skill.
-
 ## Fix Order
 
 1. Formatting: if `pnpm format:check` fails, run `pnpm format`, inspect the diff, and keep only formatting changes that belong to the current polish pass.
