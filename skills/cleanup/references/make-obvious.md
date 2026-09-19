@@ -1,14 +1,3 @@
----
-name: make-obvious
-description: >-
-  Make dense or needlessly indirect code understandable, then simplify one
-  coherent slice at a time. Use for make-obvious; cleanup or slop review;
-  prune, simplify, inline, or import cleanup; fix-casts or TypeScript assertion
-  audits; and one-call wrappers or one-liner helpers that should be inlined.
-  Do not use for generic tutorials or unbounded refactors without a concrete
-  scope.
----
-
 # Make Obvious
 
 Reduce the amount a maintainer must hold in working memory. Work on one
@@ -28,11 +17,11 @@ Match the lens to what the user authorized:
 - **Simplify** — apply a named deletion, inline, colocation, rename, or accepted
   extraction in the user-selected scope.
 - **Imports** — change import paths only; read
-  [the cleanup lenses](references/cleanup.md).
+  [the cleanup lenses](cleanup.md).
 - **Casts** — audit or remove TypeScript assertions; read
-  [the cast lens](references/casts.md) before touching a cast.
+  [the cast lens](casts.md) before touching a cast.
 - **Pass** — process an explicitly bounded cleanup scope as successive slices;
-  read [the cleanup lenses](references/cleanup.md).
+  read [the cleanup lenses](cleanup.md).
 
 Do not turn a request for judgment into an edit. When the user already named a
 microscopic simplification and asked to make it, do not add a separate approval

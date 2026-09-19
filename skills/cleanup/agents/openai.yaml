@@ -1,0 +1,6 @@
+interface:
+  display_name: "Cleanup"
+  short_description: "Scan for deepening and cleanup opportunities"
+  default_prompt: "Use $cleanup to scan for deepening opportunities or simplify one slice."
+policy:
+  allow_implicit_invocation: false
