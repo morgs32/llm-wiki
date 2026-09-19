@@ -25,7 +25,13 @@ Never hand-write Worker `Env`:
 Wrangler generates the canonical `Env` from the Wrangler config, compatibility
 date, compatibility flags, and bindings.
 
+In an Nx workspace, run the project's typegen target so its dependencies and
+task pipeline run. Invoke `wrangler types` directly only when no such target
+exists:
+
 ```bash
+nx run <project>:<typegen-target>
+# fallback when no typegen target exists:
 pnpm wrangler types
 # or: wrangler types
 ```
@@ -47,10 +53,12 @@ Put the generated file in `compilerOptions.types`. If the Worker uses
 }
 ```
 
-Run `wrangler types` after any Wrangler config change, and before typecheck /
-CI. Prefer `--check` in CI when the generated file is committed:
+Run typegen after any Wrangler config change, and before typecheck / CI.
+Prefer `--check` in CI when the generated file is committed:
 
 ```bash
+nx run <project>:<typegen-target> -- --check
+# fallback when no typegen target exists:
 pnpm wrangler types --check
 ```
 
@@ -87,17 +95,34 @@ not recreate the binding surface.
 
 ## Adding a binding or var
 
-1. Add it in `wrangler.jsonc` (`vars`, `r2_buckets`, `kv_namespaces`,
-   `durable_objects`, `services`, secrets, etc.).
-2. Run `wrangler types`.
+1. Add non-secret bindings in `wrangler.jsonc` (`vars`, `r2_buckets`,
+   `kv_namespaces`, `durable_objects`, `services`, etc.).
+2. Run the typegen target (or `wrangler types` when none exists).
 3. Use `env.YOUR_BINDING` — the generated `Env` is the source of truth.
 
 Do not also declare that binding in a custom `env.d.ts` / `env.ts`.
+Do not put secret values in `vars`.
+
+Declare secret **names** in config, not values:
+
+```jsonc
+{
+  "secrets": {
+    "required": ["API_KEY"]
+  }
+}
+```
+
+Local values live in `.dev.vars` (gitignored). Production values are set with
+`wrangler secret put` / `wrangler secret bulk`. `wrangler types` reads
+`secrets.required` for `Env` — it does not need the remote secret value.
 
 For Workers RPC, pass the callee Wrangler configs too so `Service<>` and
 `DurableObjectNamespace<>` get a type parameter:
 
 ```bash
+nx run <project>:<typegen-target> -- -c ./wrangler.jsonc -c ../other-worker/wrangler.jsonc
+# fallback when no typegen target exists:
 pnpm wrangler types -c ./wrangler.jsonc -c ../other-worker/wrangler.jsonc
 ```
 
@@ -107,6 +132,8 @@ Hono owns its own `Env`. Generate a distinct interface name instead of
 colliding with the global `Env`:
 
 ```bash
+nx run <project>:<typegen-target> -- --env-interface CloudflareBindings
+# fallback when no typegen target exists:
 pnpm wrangler types --env-interface CloudflareBindings
 ```
 

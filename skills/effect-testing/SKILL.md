@@ -37,8 +37,11 @@ it.effect('loads rows', () =>
 );
 ```
 
-`it.effect` already provides a fresh `Scope` and Effect test services
-(`TestClock`, `TestConsole`). Do not wrap the test body in `Effect.scoped`.
+`it.effect` is `Tester<Scope.Scope>`: it runs `Effect.scoped` and provides
+Effect test services (`TestClock`, `TestConsole`). Use it for
+`Effect.acquireRelease` and other scoped resources. Do not wrap the test body
+in another `Effect.scoped`. Do not look for `it.scoped` — that tester is not
+on the current `@effect/vitest` methods object.
 
 Use `it.live` only when the test must see the real clock, logger, or other
 live services. `it.effect` suppresses logs; provide a logger or use `it.live`
