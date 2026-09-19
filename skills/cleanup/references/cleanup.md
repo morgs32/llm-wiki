@@ -1,7 +1,7 @@
 # Cleanup lenses
 
 Use this reference only for **Judge**, **Imports**, or **Pass**. The shared
-`SKILL.md` owns grounding, simplification, tests, and scope.
+`make-obvious.md` owns grounding, simplification, tests, and scope.
 
 ## Judge
 
