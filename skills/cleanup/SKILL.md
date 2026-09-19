@@ -6,7 +6,6 @@ description: >-
   user says cleanup, /cleanup, architecture cleanup, scan for overload, props
   discrimination, or misnamed files; also for make-obvious, slop, prune,
   /cleanup-mode, judge, casts, or import cleanup.
-disable-model-invocation: true
 ---
 
 # Cleanup
