@@ -16,7 +16,9 @@ const DeployTestLayer = Layer.mergeAll(NanoIdFactory, UlidMonotonicFactory);
 
 /**
  * Capnweb/integration specs: `it.layer` with production-like layers, not a `runPromise` wrapper helper.
+ * Use the `it` passed into the callback — not the outer `it`.
  *
+ * @bad Using the outer `it` inside `it.layer` — Vitest reports no tests.
  * @bad `function runDeploy(props) { return managedRuntime.runPromise(deploy(props)) }` — rename-only indirection.
  */
 describe('deployOrderWorker', () => {

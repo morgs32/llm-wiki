@@ -15,7 +15,12 @@ See [README.md](./README.md) for format.
 
 | File                                              | Description |
 | ------------------------------------------------- | ----------- |
+| `cloudflare/add-binding-then-typegen.md`          | Add bindings in wrangler.jsonc, then run typegen; declare secret names not values |
 | `cloudflare/dont-equate-unrelated-identifiers.ts` | /\*\*       |
+| `cloudflare/hono-env-interface.ts`                | Distinct `--env-interface` for Hono Bindings, not the Worker global `Env` |
+| `cloudflare/use-global-env.ts`                    | Use the typegen global `Env`; do not import a hand-rolled Env module |
+| `cloudflare/wrangler-dev-ready-on-http.md`        | Wait for `Ready on http://` — do not sleep or wait for wrangler exit |
+| `cloudflare/wrangler-types-generate-env.md`       | `wrangler types` owns `Env` and `worker-configuration.d.ts` |
 
 ## durable-objects
 
@@ -143,6 +148,7 @@ See [README.md](./README.md) for format.
 
 | File                                              | Description |
 | ------------------------------------------------- | ----------- |
+| `testing/assert-failures-with-effect-exit.ts`     | Assert expected Effect failures with `Effect.exit` |
 | `testing/colocate-single-subject-specs.ts`        | Colocate focused specs by source basename; keep integrations separate |
 | `testing/inline-decode-rpc-no-decode-wire.ts`     | /\*\*       |
 | `testing/local-secrets-fail-at-load.ts`           | /\*\*       |
@@ -150,6 +156,8 @@ See [README.md](./README.md) for format.
 | `testing/no-run-promise-in-specs.ts`              | /\*\*       |
 | `testing/one-it-from-effect-vitest.ts`            | /\*\*       |
 | `testing/plain-rpc-interface-test-doubles.ts`     | /\*\*       |
+| `testing/testclock-not-date-now.ts`               | Advance `TestClock`; do not use `Date.now()` / `new Date()` in specs |
+| `testing/tsafe-equals-type-assertions.ts`         | Type-level spec assertions use `tsafe` `Equals` |
 | `testing/vitest-config-spec-suffix-by-runtime.ts` | /\*\*       |
 | `testing/workers-vitest-env-import.ts`            | /\*\*       |
 
