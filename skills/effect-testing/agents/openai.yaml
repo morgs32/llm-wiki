@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Effect testing'
+  short_description: 'Write Effect specs with @effect/vitest'
+  default_prompt: 'Use $effect-testing when writing or reviewing Effect specs.'
