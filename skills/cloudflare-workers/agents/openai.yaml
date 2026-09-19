@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Cloudflare Workers'
+  short_description: 'Wrangler Env types, bindings, and Workers tests'
+  default_prompt: 'Use $cloudflare-workers for Worker Env types, bindings, and wrangler typegen.'
