@@ -18,8 +18,7 @@ optional, not required to land the change.
 - Shared patterns live under `skills/patterns/references/patterns/**`.
 - Installable shared skills live under `skills/**` (global via the
   `~/.agents/skills` symlink into this checkout).
-- The only workflow used only by this repository lives under
-  `.agents/skills/update-morgs32-llm-wiki/`.
+- This publication workflow lives under `skills/update-morgs32-llm-wiki/`.
 - Root routing or publication policy lives in `AGENTS.md` and `README.md`.
 
 Edit installable skills in this checkout's `skills/**` (that is the live global

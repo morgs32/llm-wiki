@@ -31,9 +31,9 @@ or use `--check` for a read-only drift check.
 
 ## Publish and update shared guidance
 
-Use the repo-local
-[`update-morgs32-llm-wiki`](./.agents/skills/update-morgs32-llm-wiki/SKILL.md)
-workflow to publish pattern or skill source changes:
+Use
+[`update-morgs32-llm-wiki`](./skills/update-morgs32-llm-wiki/SKILL.md)
+to publish pattern or skill source changes:
 
 1. Work on `main` in this checkout. `git pull` if remote `main` has moved.
 2. Change `skills/patterns/`, update its pattern index when needed,

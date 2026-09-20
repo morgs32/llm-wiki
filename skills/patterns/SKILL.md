@@ -36,8 +36,8 @@ do not infer a universal rule from one example.
 
 This skill applies guidance from the live `morgs32/llm-wiki` checkout. To change
 shared patterns or any installable skill, edit that repository's `skills/**`
-tree (global via the `~/.agents/skills` symlink) and use the repo-local
-`$update-morgs32-llm-wiki` workflow to publish.
+tree (global via the `~/.agents/skills` symlink) and use
+`$update-morgs32-llm-wiki` to publish.
 
 `~/.agents/skills` is a symlink into this repository's `skills/` directory. Edit
 skills in the checkout; do not maintain a second global copy.

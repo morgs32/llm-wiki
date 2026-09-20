@@ -59,5 +59,5 @@ feat/colocate-single-subject-specs
 ```
 
 Prefer the branch prefix that matches the publication commit's conventional
-type. See `.agents/skills/update-morgs32-llm-wiki/SKILL.md` for the full
+type. See `skills/update-morgs32-llm-wiki/SKILL.md` for the full
 publication workflow.
