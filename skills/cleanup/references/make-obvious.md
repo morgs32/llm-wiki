@@ -186,6 +186,15 @@ complexity is essential and stop.
 
 ## Make the tests teach the slice
 
+Use the [shared test organization convention](../../patterns/references/patterns/testing/colocate-single-subject-specs.ts)
+and the consuming repository's runtime profile. Do not duplicate their rules
+or invent a new test workflow.
+
+For review-only work, report numbered actionable findings without moving tests.
+For restructuring, handle one observable promise, verify it, and stop unless
+the user requested a bounded set of slices. A review can conclude that no move
+is warranted; file length alone is not a defect.
+
 1. Build an old-test to invariant to new-test coverage map before moving tests.
 2. Group tests by observable behavior. Keep fixtures local to that behavior and
    import them directly; do not create a universal machine or fake runtime.

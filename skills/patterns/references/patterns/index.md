@@ -149,7 +149,7 @@ See [README.md](./README.md) for format.
 | File                                              | Description |
 | ------------------------------------------------- | ----------- |
 | `testing/assert-failures-with-effect-exit.ts`     | Assert expected Effect failures with `Effect.exit` |
-| `testing/colocate-single-subject-specs.ts`        | Colocate focused specs by source basename; keep integrations separate |
+| `testing/colocate-single-subject-specs.ts`        | Source-owned specs, behavioral integrations, selective phase annotations, and invariant preservation |
 | `testing/inline-decode-rpc-no-decode-wire.ts`     | /\*\*       |
 | `testing/local-secrets-fail-at-load.ts`           | /\*\*       |
 | `testing/managed-runtime-it-layer.ts`             | /\*\*       |
