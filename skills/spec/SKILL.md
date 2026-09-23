@@ -3,49 +3,58 @@ name: spec
 description: >-
   Grill a fuzzy plan one question at a time (chat only), then synthesize a
   numbered design spec under the active project's established planning tree.
-  Use when the user says /spec, wants a design spec, or wants grill + to-spec
-  before implementation.
+  Use when the user says /spec, wants a design spec, requests an implementation
+  plan or plan review, or wants grill + to-spec before implementation.
 ---
 
 # Spec (grill → design doc)
 
-Two phases in one skill: **grill in chat**, then **write a spec file**. Do not write glossary files, ADRs, or other markdown during the grill. The only file you create is the final design spec.
+For a new design: **resolve decisions in chat**, then **write a spec file**. Do not write intermediate glossary files or ADRs. For a requested plan, revision, review, or archival, use the document conventions below directly; do not restart the design interview.
 
 ## Phase 1 — Grill (chat only)
 
-Interview relentlessly until you and the user share an understanding.
+Resolve material design choices until you and the user share an understanding. Ordinary fixes and already specified implementation do not require this workflow.
 
 1. Ask **one question at a time**. Wait for the answer. Never dump a questionnaire.
 2. Walk the design tree depth-first: resolve dependencies before downstream choices.
 3. For every question, offer a **recommended answer** (brief, opinionated).
-4. If a _fact_ is in the codebase or wiki, **look it up** — do not ask. Decisions belong to the user; put each one to them and wait.
+4. If a _fact_ is in the codebase or wiki, **look it up** — do not ask. Ask about unresolved material decisions, not routine implementation details or decisions already requested or approved.
 5. Sharpen fuzzy language in chat: propose a canonical term when something is overloaded. Challenge contradictions with existing `wiki/glossary.md` terms or code. Keep vocabulary alignment in the conversation only — do not write `CONTEXT.md` or ADRs.
 6. Do **not** write code or the spec file until the user confirms shared understanding (or explicitly says "write the spec").
 
-### Docs to read before / while grilling
+### Material decisions and approval
 
-Read these **before** inventing topology, trust boundaries, or domain names. Prefer wiki and patterns over stale WIP code.
+Confirm unrequested abstractions, public-contract changes, named domain concepts, and runtime or trust-boundary moves before including them in the design. State the proposed purpose, shape or contract, exact use sites, and meaningful tradeoffs. A new local function or type is not automatically a new design decision.
 
-| Priority | Active-project path               | Use for                                                                   |
-| -------- | --------------------------------- | ------------------------------------------------------------------------- |
-| 1        | `wiki/architecture/`              | Intended subsystem topology, `*Api` gateways, finalize/ledger/block flows |
-| 2        | `wiki/glossary.md`                | Canonical domain terms                                                    |
-| 3        | `wiki/index.md`                   | Catalog of wiki pages                                                     |
-| 4        | `AGENTS.md` Docs lookup           | Keyword → pattern / architecture routing                                  |
-| 5        | `$patterns` (`references/patterns/`) | Generic code-shape patterns                                               |
-| 6        | `llm-wiki/patterns/`              | Zerospin-specific patterns and case studies                               |
-| 7        | `llm-wiki.md`                     | How this repo's LLM wiki idea works (meta)                                |
-| 8        | `TODOS.md`                        | Target-vs-current naming / topology audit                                 |
+Explicit requests and prior approvals settle the corresponding decisions: do not ask again while writing the spec or implementing it. Routine details within the approved design need no separate confirmation. When a material unresolved choice arises during implementation, resolve that choice without forcing a new spec document or restarting the interview.
 
-Also read the relevant source under `packages/` / `apps/` when the wiki is thin or the question is about current behavior.
+Vet inherited constraints: identify the invariant, trace why today's dependency exists, test whether proposed ownership still needs it, and consider removing redundant work before adding coordination. Existing code, docs, and previous explanations are evidence, not proof that a historical mechanism must survive.
 
-**Rule:** docs describe intended topology; code may lag. Do not treat stale `*Repo` method names as the design target when architecture pages disagree.
+### Relevant evidence
+
+Use the active project's routing and indexes to find only the architecture pages, glossary terms, patterns, and source needed for the decision. Reuse evidence already read. Source establishes current behavior; architecture documentation describes intended behavior. Report discrepancies rather than assuming either is authoritative about a new design. Do not require a fixed reading tour of every documentation tree.
+
+## Document conventions
+
+Use the active project's established `PLAN_ROOT` (resolved below) for development documents; do not introduce a second planning tree.
+
+| Kind | Path under `PLAN_ROOT` |
+| --- | --- |
+| Spec | `specs/XXX-spec-<topic>.md` |
+| Plan | `plans/XXX-plan-<topic>.md` |
+| Standalone diagram | `diagrams/<topic>.md` |
+| RFC | `rfcs/<topic>.md` |
+
+- Revise an existing document in place. Use ordered lists for spec/plan bullets and steps, and numbered findings when reviewing a plan.
+- A standalone plan uses the same prefix allocation as a new spec. A derived plan reuses its spec's number and topic.
+- Archive a spec only once its implementation plan exists. Archive a plan only after full implementation and verification. Move to `PLAN_ROOT/archived/` without renaming.
+- For handoff naming and archival, use [handoff](../handoff/SKILL.md#destination-and-lifecycle).
 
 ## Phase 2 — Spec (one file)
 
 After the user confirms alignment:
 
-1. Sketch the **test seams** for the change. Prefer existing seams; prefer the highest seam; aim for as few as possible (ideally one). Confirm seams with the user before writing the file.
+1. Sketch the **test seams** for the change. Prefer existing seams; prefer the highest seam; aim for as few as possible (ideally one). Confirm only unresolved material testing choices; reuse seams already requested or approved.
 2. Determine `PLAN_ROOT` before writing.
 
    1. Read root `AGENTS.md` and inspect the existing planning directories.
@@ -128,14 +137,14 @@ Anything else worth carrying forward (open questions only if the user deferred t
 1. Grill asked one question at a time and waited.
 2. Codebase/wiki answered factual questions without bothering the user.
 3. User confirmed shared understanding.
-4. Seams were checked with the user.
+4. Material testing choices were resolved; settled decisions were not re-asked.
 5. Exactly one new file exists at `PLAN_ROOT/specs/XXX-spec-<topic>.md` with numbered lists and project vocabulary, or at the same-named archived path after its same-numbered implementation plan is written.
 
 ## Anti-patterns
 
 1. Writing `CONTEXT.md`, `docs/adr/`, or any mid-grill markdown.
 2. Re-interviewing during Phase 2 — synthesize what was already decided.
-3. Inferring architecture from WIP repo glue when `wiki/architecture/` says otherwise.
+3. Treating WIP source or architecture documentation as an unquestionable design constraint.
 4. Dumping a questionnaire or writing the spec before the user confirms.
 5. Creating `PLAN_ROOT/plans/*` or tickets unless asked.
 6. Giving a derived implementation plan a different numeric prefix or topic from its source spec.

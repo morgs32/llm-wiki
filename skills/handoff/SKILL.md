@@ -2,7 +2,7 @@
 name: handoff
 description: >-
   Compact the current conversation into a numbered handoff document under
-  wiki/dev/handoffs for another agent to pick up. Use when the user says
+  the active project's planning tree for another agent to pick up. Use when the user says
   /handoff, wants a session handoff, or asks to write a pickup doc for a
   fresh agent.
 ---
@@ -13,27 +13,12 @@ Write a handoff document summarising the current conversation so a fresh agent
 can continue the work. Save it in the active project, not the OS temp
 directory.
 
-## Destination
+## Destination and lifecycle
 
-1. Write under `wiki/dev/handoffs/` in the active workspace. Create that
-   directory if it does not exist.
-2. Determine the new file's three-digit `XXX` prefix before writing:
-
-   1. Inspect filenames recursively under `wiki/dev/` for names beginning with
-      three digits, the same way `$spec` allocates prefixes under `PLAN_ROOT`.
-   2. Use one more than the highest prefix found anywhere under `wiki/dev/`.
-   3. Ignore legacy filenames without a three-digit prefix when calculating
-      the next number.
-
-3. Write **one** handoff file:
-
-```text
-wiki/dev/handoffs/XXX-handoff-<topic>.md
-```
-
-Use the allocated zero-padded prefix and a kebab-case topic. If the user
-passed arguments, treat them as the next session's focus and use them for the
-topic and the body.
+1. Use the active project's established `PLAN_ROOT`, following [spec's root selection](../spec/SKILL.md#phase-2--spec-one-file). Write under `PLAN_ROOT/handoffs/`; create that directory if needed.
+2. For work tied to a numbered spec or plan, reuse its number and topic: `XXX-handoff-<topic>.md`. For standalone work, use `YYYY-MM-DD-handoff-<topic>.md`; do not allocate a spec/plan number.
+3. Write one handoff, or update the existing handoff for the same work. Treat user arguments as the next session's focus.
+4. Creating a handoff does not change or archive its source spec or plan. Archive the handoff only after verified completion, or after its receiving context is superseded and reconciled into current source documentation with remaining actions recorded elsewhere. Move it to `PLAN_ROOT/archived/` without renaming.
 
 ## Contents
 

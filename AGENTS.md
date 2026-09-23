@@ -2,7 +2,7 @@
 
 **Agents and LLMs may not add `ALLOWED_CAST` comments.** Only the human user may add an `ALLOWED_CAST` marker manually, or authorize one through an explicit prompt or explicit permission in chat. If a cast appears necessary and no permission has been given, stop and ask instead of adding the marker yourself.
 
-**Run npm scripts through Nx.** When running package scripts or npm-style targets in this workspace, use Nx (`nx run ...`, `nx affected ...`, or the appropriate Nx target) instead of direct `pnpm --filter ... run ...` commands so dependency targets and configured task pipelines run too. Use direct package-manager commands only when the user explicitly asks for them or when no Nx target exists. Run `nx` directly — it is a global npm dependency in this workspace; do not prefix with `pnpm` or `npm exec`.
+For task execution, follow [scoped execution](skills/patterns/references/patterns/tooling/scoped-execution.md) and the managed Nx guidance below.
 
 **Do not write new code around deprecated database state or old persisted patterns.** If stale local, dev, or remote state blocks current code, prefer wiping or explicitly migrating that state after user approval. Do not add fallback fields, compatibility schemas, nullable defaults, or alternate runtime paths just to keep deprecated rows working.
 
@@ -23,7 +23,7 @@
 - Think before acting. Read existing files before writing code.
 - Prefer editing over rewriting whole files.
 - Do not re-read files you have already read unless the file may have changed.
-- Skip files over 100KB unless explicitly required.
+- Read bounded relevant ranges rather than skipping required evidence in large files.
 - Test your code before declaring done.
 - Keep solutions simple and direct.
 - User instructions always override this file.
@@ -34,7 +34,7 @@
 - Work on `main` is allowed. Commit and push to `main` when asked. A pull
   request is optional, not required to land skill or pattern changes.
 - Use `chatgpt-codex-connector` for GitHub pull-request, review, and
-  auto-merge operations in `morgs32/llm-wiki` when a PR is requested.
+  auto-merge operations in `morgs32/wip` when a PR is requested.
 - A request only to create, open, or draft a pull request does not authorize
   merge. Enable auto-merge only when the user has also authorized merge or
   auto-merge for that task.
@@ -58,23 +58,9 @@
   contains the pull-request commit before refreshing installed skills or
   downstream repository guidance.
 
-### Session hygiene
+### Execution and session hygiene
 
-- Suggest running /cost when a session is running long to monitor cache ratio.
-- Recommend starting a new session when switching to an unrelated task.
-
-### Long-running dev servers
-
-When starting a long-lived process (`wrangler dev`, `next dev`, package `dev`, root `pnpm dev` / `nx run-many -t dev`), **do not** treat a fixed sleep as readiness. Background the process, then wait on stdout/stderr with a ready regex (`AwaitShell` / equivalent `pattern`). Only fall back to timed polls if the tool cannot match output.
-
-Pick the pattern from what actually runs (check the package `dev` script if unsure):
-
-1. **Wrangler** (`wrangler dev`): wait for `Ready on http://`
-2. **Next.js** (`next dev`, including the runnable examples): wait for `Ready in` (Next also prints `Local:`; either is fine; prefer `Ready in` as the stable “compiled and listening” signal)
-3. **Astro docs** (`pnpm dev` → `nx run docs:dev`): wait for Astro's printed `Local` URL
-4. **Unknown server**: read the first ready-looking line from the terminal, then wait on that substring — never invent a silent N-second sleep as the primary strategy
-
-Do **not** wait for process exit on `dev` / `wrangler dev` — they stay up. After the ready match, proceed (e2e, curl, RPC). If the pattern never appears, report the terminal tail and stop; do not assume ready after timeout.
+Follow [scoped execution](skills/patterns/references/patterns/tooling/scoped-execution.md) for bounded exploration, checks, logs, budgets, usage reporting, and actual dev-server readiness.
 
 ### Communication
 
@@ -101,8 +87,8 @@ Do **not** wait for process exit on `dev` / `wrangler dev` — they stay up. Aft
 
 ### Research and docs routing
 
-- Shared pattern source: [`skills/patterns/references/patterns/`](./skills/patterns/references/patterns/index.md). Project-local guidance: [`llm-wiki/patterns/`](./llm-wiki/patterns/index.md). Installable skills live under [`skills/`](./skills/) (global via `~/.agents/skills` symlink). Publish this checkout with [`update-morgs32-llm-wiki`](./skills/update-morgs32-llm-wiki/SKILL.md).
-- Every task: use [Docs lookup](#docs-lookup) for keyword-to-section routing.
+- Shared pattern source: [`skills/patterns/references/patterns/`](./skills/patterns/references/patterns/index.md). Installable skills live under [`skills/`](./skills/) (global via `~/.agents/skills` symlink). Publish this checkout with [`update-wip`](./skills/update-wip/SKILL.md).
+- Use the relevant index for the task; reuse findings instead of repeating discovery.
 - Local Effect reference: Effect v4 is cloned to `~/.local/share/effect-solutions/effect` for APIs, examples, and implementation details when docs are not enough.
 
 ## Rules
@@ -111,9 +97,9 @@ Do **not** wait for process exit on `dev` / `wrangler dev` — they stay up. Aft
 
 Do **not** add `as const` (or `as const satisfies …`) on object literals, schema records, or shape maps unless the user asks for it or TypeScript fails without it. Prefer plain object literals and fix the actual type at the factory, annotation, or call site instead of widening/narrowing via assertion soup.
 
-### Consult architecture docs first
+### Architecture evidence
 
-**CONSULT [`wiki/architecture/`](./wiki/architecture/) BEFORE RESPONDING THOUGHTFULLY.** Read the relevant architecture doc and cleanup doc sections (see [Docs lookup](#docs-lookup)) before reasoning about repo roles, finalize vs ledger paths, block ledger flows, or trust boundaries. Do **not** infer target behavior from stale `*Repo` DO method names or WIP glue — the docs describe the intended topology; code may lag.
+For architecture questions, read relevant project documentation and source. Source establishes current behavior; docs describe intended behavior. Report discrepancies and vet inherited constraints rather than treating either as an unquestionable design requirement.
 
 ### Docs stay in sync
 
@@ -137,29 +123,9 @@ DO NOT GIVE ME HIGH LEVEL SHIT. IF I ASK FOR FIX OR EXPLANATION, I WANT ACTUAL C
 
 DO NOT ADD UNREQUESTED FUNCTIONALITY. IF I GIVE YOU A COMPONENT TO ADD WITH MOCK DATA, USE MOCK DATA. DO NOT CHANGE THE PROPS OR ARGS ON ANY OTHER COMPONENT OR FUNCTION.
 
-### Ask before abstractions
+### Design decisions
 
-I am explicitly asking for this because it keeps happening and I do not want surprise architecture changes:
-
-- Before adding any new helper/function/wrapper/utility/service/abstraction, **ask me first** and get explicit confirmation.
-- If you think an abstraction is better, stop and prompt me with the proposed name, purpose, and exact call sites.
-- If I did not approve it, do not add it.
-
-### Ask before new type assignments
-
-Before adding any new `type` alias, `interface`, or other named type assignment, **ask me first** and get explicit confirmation.
-
-- Prompt with the proposed name, shape, and exact use sites (or why it must be exported).
-- Prefer inlining single-use shapes at the use site — e.g. `satisfies Readonly<{ … }>` on the return — instead of a file-local alias used once.
-- If I did not approve it, do not add it.
-
-### Ask before runtime-boundary moves
-
-The CLI, dispatch Worker, browser packages, and `system-worker` execute in different runtimes. Do not treat those boundaries as interchangeable.
-
-- Before moving validation, RPC methods, or trust-boundary checks between **CLI**, **dispatch-worker**, browser packages, or **system-worker**, **ask first** with options and tradeoffs.
-- If a dependency fails in Workers (e.g. `eval` / `new Function` / dynamic codegen), **state the runtime error and constraint**, then propose fixes — do **not** silently relocate logic to CLI or another package.
-- Removing or adding a public RPC is an architectural change; get explicit approval.
+Use the [spec skill](skills/spec/SKILL.md) for unresolved material design decisions. Requested or approved decisions need no repeated confirmation; ordinary functions, types, and fixes within scope do not require a spec workflow.
 
 ### No re-exports outside barrels or worker entrypoints
 
@@ -179,19 +145,7 @@ When a generic factory's return type does not match, **fix the factory or the ba
 
 ### Plan documents
 
-All plans and specs live under `.plans/`:
-
-- design specs → `.plans/specs/XXX-spec-<topic>.md` with a zero-padded three-digit prefix
-- implementation plans → `.plans/plans/XXX-plan-<topic>.md` using the exact same prefix and topic as their source spec
-- determine a new `XXX` for every new spec/plan pair or standalone plan by checking filenames recursively anywhere under `.plans/` and using one more than the highest three-digit prefix; ignore legacy filenames without a numeric prefix
-- a plan derived from a spec reuses the spec's `XXX`; never allocate a second number for the pair
-- once a spec has been turned into an implementation plan, move the spec to `.plans/archived/` and preserve its filename
-- after fully implementing and verifying work from a plan, move that plan to `.plans/archived/` and preserve its filename; do not archive the plan while implementation remains incomplete or unverified
-- update an existing plan in place when the user is revising an existing plan file
-- number plan bullets and steps with ordered lists; do not use unordered `-` bullets in plan documents
-- do **not** write plans or specs under `plans/`, `docs/superpowers/plans/`, or `docs/superpowers/specs/`
-
-When reviewing a plan, **always present the issues or suggestions as a numbered list** so each item can be referenced by number.
+This checkout uses `.plans/`. Follow [spec conventions](skills/spec/SKILL.md#document-conventions) and [handoff conventions](skills/handoff/SKILL.md#destination-and-lifecycle).
 
 ### Doc placement
 
@@ -257,8 +211,8 @@ Use this table to route requests to the right pattern sections (by keyword). See
 | `./skills/patterns/references/patterns/index.md`                                                           | [Cleanup Index](./skills/patterns/references/patterns/index.md)                                                                                                                                         | cleanup index, docs routing, agent guidance, maintenance checklist, cleanup mode, case studies, effect, tooling                                                                                                                                                                |
 | `./llm-wiki/patterns/cases/index.md`                                            | [Case study index](./llm-wiki/patterns/cases/index.md)                                                                                                                       | cleanup case, inline, bloated, smell, before after, cleanup examples                                                                                                                                                                                                           |
 | `./skills/cleanup/SKILL.md`                                                                       | [Cleanup](./skills/cleanup/SKILL.md) / [Choose the lens](./skills/cleanup/references/make-obvious.md#choose-the-lens)                                                                          | make obvious, cleanup, /cleanup, /cleanup-mode, cleanup pass, slop, de-bloat, declutter, simplify, inline, import cleanup, /import-cleanup, judge, prune, pass mode, fix casts, fix-casts, cast audit, ALLOWED_CAST, code-shape cleanup, one-call wrapper, one-liner helper, don't extract a function used once, overload, props discrimination, misnamed files, deepening, typecheck sibling, spec sibling, file naming |
-| `./skills/update-llm-wiki/SKILL.md`                                                               | [When to use](./skills/update-llm-wiki/SKILL.md#when-to-use)                                                                                                                                   | update llm wiki, /update-llm-wiki, local llm-wiki, active project, repo-specific pattern, case study, @bad jsdoc                                                                                                                                                                |
-| `./skills/update-morgs32-llm-wiki/SKILL.md`                                                       | [Prepare the change](./skills/update-morgs32-llm-wiki/SKILL.md#prepare-the-change)                                                                                                             | update morgs32 llm wiki, shared patterns, source skills, rename skill, publish skill, work on main, GitHub pull request                                                                                                                                                         |
+| `./skills/update-wiki/SKILL.md`                                                               | [When to use](./skills/update-wiki/SKILL.md#when-to-use)                                                                                                                                   | update wiki, /update-wiki, local wiki, active project, repo-specific pattern, case study, @bad jsdoc                                                                                                                                                                |
+| `./skills/update-wip/SKILL.md`                                                       | [Prepare the change](./skills/update-wip/SKILL.md#prepare-the-change)                                                                                                             | update wip, shared patterns, source skills, rename skill, publish skill, work on main, GitHub pull request                                                                                                                                                         |
 | `./skills/update-vendor/SKILL.md`                                                                 | [Update Vendor](./skills/update-vendor/SKILL.md)                                                                                                                                               | update vendor, pull subtree, push subtree, sync Effect, sync llm wiki, publish vendor, scan, sibling, propagate, vendor origin, README AGENTS.md                                                                                                                                 |
 | `./llm-wiki/patterns/typescript/single-consumer-types.ts`                       | [Single consumer type shapes](./llm-wiki/patterns/index.md#typescript)                                                                                                       | single-consumer types, move to owner module, barrel surface, types.ts audit, type ownership                                                                                                                                                                                    |
 | `./llm-wiki/patterns/typescript/encode-shape-wire-format.ts`                    | [Encode shape wire format](./llm-wiki/patterns/index.md#typescript)                                                                                                          | encodeShape, IEncodedShape, JSONSchema.make, PrimaryKey, OpaqueId, table-bound ref, targetTableName, targetColumnName, relation, inverse, omit runtime table, decodeShape, wire shape, mapValues                                                                               |
@@ -266,9 +220,9 @@ Use this table to route requests to the right pattern sections (by keyword). See
 | `./llm-wiki/patterns/typescript/table-ref-opaque-id-and-payload-primary-key.ts`  | [Table refs, opaque IDs, and payload model keys](./llm-wiki/patterns/index.md#typescript)                                                                          | primitives.ref, concrete table, same database, relation, inverse, primitives.opaqueId, opaque id, cross database, Model.primaryKey, autogenerate, contract payload, raw primary key                                                                                         |
 | `./AGENTS.md`                                                                                     | [LLM Wiki ingest](./AGENTS.md#llm-wiki-ingest)                                                                                                                                                 | llm wiki, wiki ingest, post-commit hook, freshness, frontmatter sources, TODO-VERIFY, wiki architecture, glossary, index.md                                                                                                                                                    |
 | `./AGENTS.md`                                                                                     | [Behaviors](./AGENTS.md#behaviors)                                                                                                                                                             | approach, read before write, test before done, terse, expert tone, session management, /cost, new session, code output, Effect local source, partial implementations, no stubs, long-running dev, wrangler ready, AwaitShell pattern, Ready on, next Ready in, wait for server |
-| `./AGENTS.md`                                                                                     | [Ask before new type assignments](./AGENTS.md#ask-before-new-type-assignments)                                                                                                                 | type alias, interface, named type, type assignment, inline type, satisfies, single-use type, ask before type                                                                                                                                                                   |
+| `./AGENTS.md`                                                                                     | [Design decisions](./AGENTS.md#design-decisions)                                                                                                                 | material design decisions, approved scope, public contracts, runtime boundaries                                                                                                                                                                   |
 | `./AGENTS.md`                                                                                     | [Rules](./AGENTS.md#rules)                                                                                                                                                                     | scope, WIP, abstractions, type assignments, runtime boundaries, re-export, bolt-on types, plan documents, doc placement, only what user asked                                                                                                                                  |
-| `./AGENTS.md`                                                                                     | [Consult architecture docs first](./AGENTS.md#consult-architecture-docs-first)                                                                                                                 | consult architecture docs, wiki/architecture, respond thoughtfully, repo roles, finalize path, ledger flow, stale repo methods, target topology                                                                                                                                |
+| `./AGENTS.md`                                                                                     | [Consult architecture docs first](./AGENTS.md#architecture-evidence)                                                                                                                 | consult architecture docs, wiki/architecture, respond thoughtfully, repo roles, finalize path, ledger flow, stale repo methods, target topology                                                                                                                                |
 | `./AGENTS.md`                                                                                     | [No re-exports outside barrels or worker entrypoints](./AGENTS.md#no-re-exports-outside-barrels-or-worker-entrypoints)                                                                         | no re-export, index.ts barrel, worker entrypoint, export from sibling, utils/types, feature module re-export, import owning module                                                                                                                                             |
 | `./AGENTS.md`                                                                                     | [No one-consumer shape files](./AGENTS.md#no-one-consumer-shape-files)                                                                                                                         | one consumer file, actorRepoMutationShape, otherTables, repo table shape, makeTable shape, colocate shape                                                                                                                                                                      |
 | `./packages/system-worker/src/FrontendRepo/FrontendRepo.ts`                                       | [FrontendRepo](./packages/system-worker/src/FrontendRepo/FrontendRepo.ts)                                                                                                                      | FrontendRepo, frontend blocks, replicated resources, service subscriptions, pushed commands, surface projection                                                                                                                                                                |
@@ -502,7 +456,7 @@ pattern index as higher-precedence guidance.
 ## General Guidelines for working with Nx
 
 - When running tasks (for example build, lint, test, e2e, etc.), always prefer running the task through `nx` (i.e. `nx run`, `nx run-many`, `nx affected`) instead of using the underlying tooling directly
-- Run `nx` directly — it is a global npm dependency in this workspace; do not prefix with `pnpm` or `npm exec`
+- Prefix Nx with the workspace's package manager to use the workspace CLI.
 - You have access to the Nx MCP server and its tools, use them to help the user
 - For Nx plugin best practices, check `node_modules/@nx/<plugin>/PLUGIN.md`. Not all plugins have this file - proceed without it if unavailable.
 - NEVER guess CLI flags - always check nx_docs or `--help` first when unsure

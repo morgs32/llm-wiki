@@ -16,8 +16,8 @@ skill when they are more specific.
 
 ## Apply the guidance
 
-1. Read the repository's `AGENTS.md` and any project-local pattern index it
-   names before choosing a shared pattern.
+1. Use the repository's `AGENTS.md` and matching entries in its local pattern
+   index before choosing a shared pattern; reuse guidance already in context.
 2. Search [the pattern index](references/patterns/index.md) for task keywords.
    Read only the matching pattern files and any directly linked reference.
    When either the task or the change being implemented or reviewed proposes a
@@ -32,12 +32,14 @@ skill when they are more specific.
 When no indexed pattern matches, follow the repository and user instructions;
 do not infer a universal rule from one example.
 
+For exploration or verification, use [scoped execution](references/patterns/tooling/scoped-execution.md). Design approval belongs in the `spec` skill, not individual code patterns.
+
 ## Source boundary
 
-This skill applies guidance from the live `morgs32/llm-wiki` checkout. To change
+This skill applies guidance from the live `morgs32/wip` checkout. To change
 shared patterns or any installable skill, edit that repository's `skills/**`
 tree (global via the `~/.agents/skills` symlink) and use
-`$update-morgs32-llm-wiki` to publish.
+`$update-wip` to publish.
 
 `~/.agents/skills` is a symlink into this repository's `skills/` directory. Edit
 skills in the checkout; do not maintain a second global copy.

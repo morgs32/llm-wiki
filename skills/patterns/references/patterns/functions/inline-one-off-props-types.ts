@@ -2,6 +2,8 @@ import { Effect } from 'effect';
 
 /**
  * Inline props on the Effect.fn parameter when used once in the file.
+ * Single-consumer shapes belong at their owning use site, not in a dedicated
+ * shape file or exported alias. Reuse warrants a shared named type; ceremony does not.
  *
  * @bad File-local `type IProps = { ... }` used only for one function signature.
  * @bad Export a props type alias nothing imports — advertises fake public API.

@@ -13,11 +13,21 @@ Do not use `subrepos/`. Do not recurse into vendored package trees (e.g.
 `vendor/effect/packages`). `llm-wiki/` at a repository root is first-party and
 is never a vendor target.
 
+## Source ownership
+
+Treat `vendor/**` as read-only in the consumer. Make source changes in the
+upstream repository, commit and push them there, then pull through this
+workflow. Keep consumer integrations outside vendor trees. Only this workflow
+may change vendored files, including verbatim restoration of consumer metadata.
+Do not edit or subtree-push from the consumer unless the user explicitly
+requests an exception; the Push procedure below applies only to that exception.
+A request to edit this skill is not a request to run a subtree operation.
+
 ## Consumer origin manifest
 
-A vendor is configured only when the **consumer** root `README.md` and
-`AGENTS.md` both name the same prefix, origin, and branch. Read those values; do
-not maintain a second manifest. Example shape:
+The **consumer** root `README.md` is the sole manifest: each configured vendor
+names its prefix, origin, and branch there. `AGENTS.md` should route to this
+skill rather than duplicate the manifest. Example shape:
 
 | Prefix | Origin | Branch |
 | --- | --- | --- |
@@ -56,7 +66,7 @@ Discovery for configured prefixes:
    stash, discard, commit, or mix them into a subtree operation without explicit
    permission.
 3. Verify every requested target is a discovered configured vendor path, has
-   matching consumer README and AGENTS.md origins, and is tracked by Git.
+   a prefix, origin, and branch in the consumer README, and is tracked by Git.
 4. Use `--squash` for every pull. Never force-push a subtree split.
 5. Process targets sequentially and stop on the first conflict or failed
    command. Report completed and unprocessed targets.
@@ -67,7 +77,7 @@ When invoked without an operation or targets, pull every configured vendor.
 Also accept one named target or an explicit set of targets.
 
 For each target, read `PREFIX`, `ORIGIN`, and `BRANCH` from the consumer
-README and AGENTS.md (they must agree), retain any vendor README metadata
+root README, retain any vendor README metadata
 section verbatim, then run:
 
 ```bash
@@ -136,8 +146,7 @@ Do not recurse farther into vendor contents.
 Treat a candidate as a consumer of this source only when all of these are true:
 
 1. Its vendor directory is tracked by the sibling repository.
-2. Its root `README.md` and `AGENTS.md` both name the same prefix, origin, and
-   branch for that vendor.
+2. Its root `README.md` names the prefix, origin, and branch for that vendor.
 3. The origin resolves to this source: either the realpath of a relative sibling
    path (e.g. `../zerospin`) matches the source root, or the normalized GitHub
    URL matches one of the source repository's remote URLs (ignore trailing

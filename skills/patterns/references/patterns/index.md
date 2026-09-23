@@ -79,6 +79,7 @@ See [README.md](./README.md) for format.
 | `naming/generic-type-parameters-all-caps.ts` | Generic type parameters use `ALL_CAPS`                          |
 | `naming/infer-utility-types.ts`              | Extractor utilities use `Infer*`, not `I*`                      |
 | `naming/monorepo-cross-package-imports.ts`   | /\*\*                                                           |
+| `naming/module-path-matches-primary-export.ts` | Rename a module path when its primary export or abstraction changes |
 | `naming/no-re-exports-outside-barrels.ts`    | Import from the defining module; do not re-export from features |
 | `naming/package-barrels-index-ts.ts`         | Keep package aggregation in `index.ts` barrels                  |
 | `naming/relative-paths-with-extensions.ts`   | /\*\*                                                           |
@@ -137,6 +138,7 @@ See [README.md](./README.md) for format.
 | `runtime/get-named-controller.ts`               | /\*\*                                         |
 | `runtime/no-provide-layers-inside-effect-fn.ts` | /\*\*                                         |
 | `runtime/no-rsc-api-helper-modules.ts`          | Keep one-consumer API calls in the owning RSC |
+| [runtime/no-canonical-bytes-in-sql.md](runtime/no-canonical-bytes-in-sql.md) | Prohibit canonical bytes in SQL; discuss ownership, checkpoints, replay, deduplication, and proposed hash replacements |
 | `runtime/no-thread-secrets-through-props.ts`    | /\*\*                                         |
 | `runtime/pretty-unknown-failure-on-cause.ts`    | /\*\*                                         |
 | `runtime/rpc-client-module-public-env.ts`       | /\*\*                                         |
@@ -156,6 +158,7 @@ See [README.md](./README.md) for format.
 | `testing/no-run-promise-in-specs.ts`              | /\*\*       |
 | `testing/one-it-from-effect-vitest.ts`            | /\*\*       |
 | `testing/plain-rpc-interface-test-doubles.ts`     | /\*\*       |
+| [testing/public-contracts-not-implementation-details.md](testing/public-contracts-not-implementation-details.md) | Black-box behavioral testing, public contracts, observable results and side effects, table-driven cases |
 | `testing/testclock-not-date-now.ts`               | Advance `TestClock`; do not use `Date.now()` / `new Date()` in specs |
 | `testing/tsafe-equals-type-assertions.ts`         | Type-level spec assertions use `tsafe` `Equals` |
 | `testing/vitest-config-spec-suffix-by-runtime.ts` | /\*\*       |
@@ -191,3 +194,10 @@ See [README.md](./README.md) for format.
 | File                                          | Description                                   |
 | --------------------------------------------- | --------------------------------------------- |
 | `ui/clickable-controls-use-pointer-cursor.ts` | Give every clickable control a pointer cursor |
+
+## Agent execution
+
+| File | Use for |
+| --- | --- |
+| `tooling/scoped-execution.md` | Bounded exploration, scoped Nx checks, caching, nx exec, logs, budgets, server readiness |
+| `naming/factory-inference-and-assertions.md` | Factory return contracts, literal inference, assertions, as const |

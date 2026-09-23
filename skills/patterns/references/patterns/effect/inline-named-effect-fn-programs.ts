@@ -6,6 +6,10 @@ declare const eventSource: {
 
 /**
  * Name inline Effect programs with Effect.fn at the existing expression site.
+ * Domain-named Effects are the implementation unit; async Promise wrappers
+ * belong at runtime entrypoints and immediately run or encode that Effect.
+ * Do not add an Effect suffix to preserve an async wrapper with the domain name.
+ * Do not parenthesize yield* merely to cast its result.
  *
  * @bad Anonymous `Effect.gen` assigned to an exported Effect value.
  * @bad `() => Effect.gen(...)` when `Effect.fn('name')` preserves the same call shape.

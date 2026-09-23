@@ -1,21 +1,21 @@
 ---
-name: update-llm-wiki
+name: update-wiki
 description: >-
   Codify an agreed convention or reusable repository-specific lesson in the
-  active project's {root}/llm-wiki/** guidance. Use after a code change, when
+  active project's {root}/wiki/** guidance. Use after a code change, when
   the user names a local pattern, or with no prompt to preserve conclusions
-  from the current chat. Do not use for shared skills or morgs32/llm-wiki.
+  from the current chat. Do not use for shared skills or morgs32/wip.
 ---
 
-# update-llm-wiki
+# Update Wiki
 
-Update only the active project's local `{root}/llm-wiki/**` tree. You may read
+Update only the active project's local `{root}/wiki/**` tree. You may read
 the rest of the repository to ground the guidance, but do not write to root
 `AGENTS.md`, `skills/**`, `.agents/**`, `vendor/**`, installed skills, another
 checkout, or remote state.
 
-If the active repository has no `{root}/llm-wiki/` directory, stop and report
-that there is no local llm-wiki profile to update.
+If the active repository has no `{root}/wiki/` directory, stop and report
+that there is no local wiki profile to update.
 
 ## When to use
 
@@ -35,7 +35,7 @@ states the same rule clearly.
    patterns, idioms, syntax, and stylistic preferences.
 2. Keep only conclusions that were explicitly requested, agreed, or shown in
    code. Do not codify unresolved debate or speculative suggestions.
-3. Search `{root}/llm-wiki/patterns/index.md` and the matching local pattern
+3. Search `{root}/wiki/patterns/index.md` and the matching local pattern
    files. Skip lessons already stated clearly.
 4. If nothing remains, say so briefly and do not invent a pattern.
 
@@ -51,12 +51,12 @@ states the same rule clearly.
    shape that demonstrated the lesson.
 
 3. **Choose the local destination**
-   Search `{root}/llm-wiki/patterns/index.md` first.
+   Search `{root}/wiki/patterns/index.md` first.
 
    - Put reusable mock patterns in the matching
-     `{root}/llm-wiki/patterns/<topic>/` directory.
+     `{root}/wiki/patterns/<topic>/` directory.
    - Put concrete before/after session evidence in
-     `{root}/llm-wiki/patterns/cases/`.
+     `{root}/wiki/patterns/cases/`.
    - Extend an existing local page when it already owns the topic.
 
 4. **Write the smallest useful pattern**
@@ -73,11 +73,11 @@ states the same rule clearly.
 
 6. **Update the local index**
    Add or revise the matching row in
-   `{root}/llm-wiki/patterns/index.md` so keyword routing finds the pattern.
+   `{root}/wiki/patterns/index.md` so keyword routing finds the pattern.
 
 7. **Keep scope tight**
    Write one pattern per lesson and touch only files under
-   `{root}/llm-wiki/**`. Report any desirable change outside that boundary
+   `{root}/wiki/**`. Report any desirable change outside that boundary
    instead of making it.
 
 Use imperative, specific, scannable prose. Prefer “Do X” and “Do not Y” over

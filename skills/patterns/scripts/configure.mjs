@@ -17,7 +17,7 @@ import { fileURLToPath } from "node:url";
 
 const skillName = "patterns";
 const legacySkillName = "engineering-patterns";
-const skillSource = "morgs32/llm-wiki";
+const skillSource = "morgs32/wip";
 const markerStart = "<!-- patterns configuration start-->";
 const markerDescription =
   "<!-- Leave the start & end comments to automatically receive updates. -->";
@@ -356,7 +356,7 @@ const verifySkillLock = (installedSkill) => {
     return "global skill lock entry is missing";
   }
   if (entry.source !== skillSource || entry.sourceType !== "github") {
-    return "global skill lock source does not match morgs32/llm-wiki";
+    return "global skill lock source does not match morgs32/wip";
   }
   if (entry.skillPath !== "skills/patterns/SKILL.md") {
     return `global skill lock path is ${entry.skillPath ?? "missing"}`;
@@ -374,7 +374,7 @@ const verifySkillLock = (installedSkill) => {
 const readRemoteSkillHash = async () => {
   const token = process.env.GITHUB_TOKEN ?? process.env.GH_TOKEN;
   const response = await fetch(
-    "https://api.github.com/repos/morgs32/llm-wiki/git/trees/main?recursive=1",
+    "https://api.github.com/repos/morgs32/wip/git/trees/main?recursive=1",
     {
       headers: {
         Accept: "application/vnd.github+json",

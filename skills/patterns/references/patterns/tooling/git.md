@@ -48,7 +48,7 @@ docs: update cleanup docs
 
 ### Branch names
 
-For topic branches and publication pull requests in `morgs32/llm-wiki`, use
+For topic branches and publication pull requests in `morgs32/wip`, use
 `<type>/<kebab-topic>` with the same Conventional Commit types as commit
 messages:
 
@@ -59,5 +59,5 @@ feat/colocate-single-subject-specs
 ```
 
 Prefer the branch prefix that matches the publication commit's conventional
-type. See `skills/update-morgs32-llm-wiki/SKILL.md` for the full
+type. See `skills/update-wip/SKILL.md` for the full
 publication workflow.

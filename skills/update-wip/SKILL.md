@@ -1,15 +1,15 @@
 ---
-name: update-morgs32-llm-wiki
+name: update-wip
 description: >-
-  Update shared patterns or skill source in morgs32/llm-wiki on main. Use from
+  Update shared patterns or skill source in morgs32/wip on main. Use from
   this repository when the user asks to change or publish its patterns or
-  skills. Do not use for a consuming repository's local {root}/llm-wiki/**
+  skills. Do not use for a consuming repository's local {root}/wiki/**
   guidance.
 ---
 
-# Update morgs32/llm-wiki
+# Update WIP
 
-Update the canonical `morgs32/llm-wiki` source in this checkout. Work on
+Update the canonical `morgs32/wip` source in this checkout. Work on
 `main` is allowed: edit, commit, and push here when asked. A pull request is
 optional, not required to land the change.
 
@@ -18,11 +18,11 @@ optional, not required to land the change.
 - Shared patterns live under `skills/patterns/references/patterns/**`.
 - Installable shared skills live under `skills/**` (global via the
   `~/.agents/skills` symlink into this checkout).
-- This publication workflow lives under `skills/update-morgs32-llm-wiki/`.
+- This publication workflow lives under `skills/update-wip/`.
 - Root routing or publication policy lives in `AGENTS.md` and `README.md`.
 
 Edit installable skills in this checkout's `skills/**` (that is the live global
-install). Do not edit a consuming repository's `{root}/llm-wiki/**` tree or any
+install). Do not edit a consuming repository's `{root}/wiki/**` tree or any
 vendor subtree. Preserve unrelated local WIP.
 
 ## Prepare the change
@@ -77,7 +77,7 @@ pull request. It does not authorize merge. A PR is optional.
    Prefer the prefix that matches the publication commit's conventional type —
    for example `docs(patterns): …` on branch
    `docs/inline-one-call-simple-helpers`. Do not use `codex/` prefixes.
-2. Open a ready pull request against `morgs32/llm-wiki:main`. Include the
+2. Open a ready pull request against `morgs32/wip:main`. Include the
    behavioral split, migration details, and local validation in the body.
 3. Verify the pull request head SHA and exact changed-file list. Wait for the
    `validate-skills` check and Codex review on that head; address in-scope

@@ -1,4 +1,4 @@
-# llm-wiki
+# WIP
 
 Shareable Codex skills for Morgan's repositories.
 
@@ -32,7 +32,7 @@ or use `--check` for a read-only drift check.
 ## Publish and update shared guidance
 
 Use
-[`update-morgs32-llm-wiki`](./skills/update-morgs32-llm-wiki/SKILL.md)
+[`update-wip`](./skills/update-wip/SKILL.md)
 to publish pattern or skill source changes:
 
 1. Work on `main` in this checkout. `git pull` if remote `main` has moved.
@@ -45,5 +45,5 @@ to publish pattern or skill source changes:
    node skills/patterns/scripts/configure.mjs /path/to/repository
    ```
 
-Do not refresh consuming-repo guidance from an unmerged PR. `update-llm-wiki`
-updates only a consuming repository's `{root}/llm-wiki/**` guidance.
+Do not refresh consuming-repo guidance from an unmerged PR. `update-wiki`
+updates only a consuming repository's `{root}/wiki/**` guidance.

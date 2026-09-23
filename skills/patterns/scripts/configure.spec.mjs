@@ -169,7 +169,7 @@ test("migrates only a same-source legacy global skill", () => {
       JSON.stringify({
         skills: {
           "engineering-patterns": {
-            source: "morgs32/llm-wiki",
+            source: "morgs32/wip",
             sourceType: "github",
             skillPath: "skills/engineering-patterns/SKILL.md",
             skillFolderHash: "legacy-hash",
@@ -237,7 +237,7 @@ if (command === "list") {
   writeFileSync(join(target, "references/patterns/index.md"), "# Patterns\\n");
   writeFileSync(join(target, "scripts/configure.mjs"), "");
   lock.skills[name] = {
-    source: "morgs32/llm-wiki",
+    source: "morgs32/wip",
     sourceType: "github",
     skillPath: "skills/patterns/SKILL.md",
     skillFolderHash: "published-hash",
